@@ -2,7 +2,17 @@
 HoneyBadger
 ===========
 
-.. image:: images/honey_badger-red-sm.png
+.. image:: images/honey_badger-white-sm-1.png
+|
+.. image:: https://drone.io/github.com/david415/HoneyBadger/status.png
+  :target: https://drone.io/github.com/david415/HoneyBadger/latest
+
+.. image:: https://coveralls.io/repos/david415/HoneyBadger/badge.svg?branch=master
+  :target: https://coveralls.io/r/david415/HoneyBadger?branch=master 
+
+.. image:: https://api.flattr.com/button/flattr-badge-large.png
+  :target: https://flattr.com/submit/auto?user_id=david415&url=https%3A%2F%2Fgithub.com%2Fdavid415%2FHoneyBadger
+|
 
 **TCP attack inquisitor and 0-day catcher.**
 
@@ -65,5 +75,36 @@ procedure
   .. code-block:: none
 
     $ ls 127*
-    127.0.0.1:33962-127.0.0.1:9666.pcap  127.0.0.1:9666-127.0.0.1:33962.attackreport.json
+    127.0.0.1:43716-127.0.0.1:9666.pcap  127.0.0.1:9666-127.0.0.1:43716.attackreport.json
 
+
+It's what you'd expect... the pcap file can be viewed and analyzed in Wireshark and other similar tools.
+The *127.0.0.1:9666-127.0.0.1:43716.attackreport.json* file contains JSON report structures.
+The attack reports contains important information that is highly relevant to your interests such as:
+
+  * type of TCP injection attack
+  * flow of attack (meaning srcip:srcport-dstip:dstport)
+  * time of attack
+  * payload of packet with overlaping stream segment (in base64 format)
+  * previously assembled stream segment that overlaps with packet payload (in base64 format)
+  * TCP sequence of packet
+  * end sequence of packet
+  * overlap start offset is the number of bytes from the beginning of the packet payload that we have available among the reassembled stream segments for retrospective analysis
+  * overlap end offset is the number of bytes from the end of the packet payload that we have in our reassembled stream segments...
+
+https://godoc.org/github.com/david415/HoneyBadger#AttackReport
+
+
+::
+
+    $ cat 127.0.0.1:9666-127.0.0.1:43716.attackreport.json
+    {"Type":"injection","Flow":"127.0.0.1:9666-127.0.0.1:43716","Time":"2015-01-30T08:38:14.378603859Z","Payload":"bWVvd21lb3dtZW93","Overlap":"aHJzCg==","StartSequence":831278445,"EndSequence":831278456,"OverlapStart":0,"OverlapEnd":4}
+    {"Type":"injection","Flow":"127.0.0.1:9666-127.0.0.1:43716","Time":"2015-01-30T08:38:14.379005763Z","Payload":"bWVvd21lb3dtZW93","Overlap":"cnMK","StartSequence":831278446,"EndSequence":831278457,"OverlapStart":0,"OverlapEnd":3}
+    ...
+
+
+|
+|
+|
+
+.. image:: images/honey_badger-white-sm-1.png
