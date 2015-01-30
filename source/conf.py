@@ -44,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'HoneyBadger'
-copyright = u'2015, David Stainton'
+copyright = u'2015, David Stainton & the honey badger drawing is creative-commons licensed by a volunteer contributor...'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

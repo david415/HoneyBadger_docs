@@ -2,7 +2,14 @@
 HoneyBadger
 ===========
 
-TCP attack inquisitor and 0-day catcher...
+.. image:: images/honey_badger-red-sm.png
+
+**TCP attack inquisitor and 0-day catcher.**
+
+HoneyBadger is a comprehensive TCP stream analysis tool for detecting and recording TCP attacks.
+HoneyBadger includes a variety of TCP stream injections attacks which will prove that the TCP attack detection is reliable.
+HoneyBadger is modern software written in Golang to deal with TCP's very olde security issues.
+It is free software, using the GPLv3 and the source code is available on github:
 
 * https://github.com/david415/HoneyBadger
 
