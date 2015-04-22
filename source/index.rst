@@ -63,8 +63,7 @@ TCP injection attacks
 4. out-of-order coalesce injection: injected packets are ahead of the next sequence. Injection of data takes place during coalescence.
 
 Each of these TCP attacks are really broader categories of attack... for instance sloppy injection that gradually brings client and server back
-into sequence synchronization. Furthermore it should be possible for the out-of-order coalesce injection to have varied results depending on the
-TCP stack. If we want to successfully capture the injection payload then we might have to create partial TCP stack emulation of various platforms.
+into sequence synchronization.
 
 
 attack detection
