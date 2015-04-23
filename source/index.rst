@@ -27,12 +27,61 @@ It is free software, using the GPLv3 and the source code is available on github:
 development status
 ------------------
 
-Current master branch is a working proof of concept but is not yet stable and
-only some features have been implemented.
+HoneyBadger is useable right now... and I'm sure there are bugs.
+We'd like to fix these problems; we've got an issue tracker that you
+can use to submit bug reports and feature requests!
+
+https://github.com/david415/HoneyBadger/issues
 
 
-I'm currently working on adding out-of-order stream segment reordering
-and coalesce injection detection.
+what does HoneyBadger do and **not** do?
+----------------------------------------
+
+HoneyBadger detects TCP injection attack attempts AND cannot know if an attack was successful.
+However, I suspect that in the wild TCP attacks will have differing TTLs and other clues that
+will help us determine if the attack was successful or not.
+
+HoneyBadger does NOT do what snort and bro do. Nor does honeybadger do what wireshark does. HoneyBadger is a passively sniffing TCP protocol analyzer whose **ONLY** purpose in life is to detect (and optionally record) TCP injection attacks.
+
+
+how do i use this thing?
+------------------------
+
+I will explain each commandline options and show usage examples below.
+
+honeybadger usage::
+
+ $ ./honeyBadger --help
+ Usage of ./honeyBadger:
+  -connection_max_buffer=0: 
+ Max packets to buffer for a single connection before skipping over a gap in data
+ and continuing to stream the connection after the buffer.  If zero or less, this
+ is infinite.
+  -detect_coalesce_injection=true: Detect coalesce injection attacks
+  -detect_hijack=true: Detect handshake hijack attacks
+  -detect_injection=true: Detect injection attacks
+  -f="tcp": BPF filter for pcap
+  -i="eth0": Interface to get packets from
+  -l="honeyBadger-logs": log directory
+  -log_packets=false: if set to true then log all packets for each tracked TCP connection
+  -max_concurrent_connections=0: Maximum number of concurrent connection to track.
+  -max_ring_packets=40: Max packets per connection stream ring buffer
+  -metadata_attack_log=true: if set to true then attack reports will only include metadata
+  -s=65536: SnapLen for pcap packet capture
+  -tcp_idle_timeout=5m0s: tcp idle timeout duration
+  -total_max_buffer=0: 
+ Max packets to buffer total before skipping over gaps in connections and
+ continuing to stream connection data.  If zero or less, this is infinite
+  -w="3s": timeout for reading packets off the wire
+
+  
+my remarks about each of these options:
+  
+- **packet capture options:** Options '-f' and '-i' are used to determine which packets to pay attention to. Currently honeybadger only supports sniffing one network interface. We've got plans to remove the libpcap dependency so in that case the '-f' filter argument would go away. '-w' and '-s' are relevant here, you probably want to use the default options.
+  
+- **logging options:** you must specify a logging directory using '-l'. pcap logging is off by default. If you set -log_packets= to true then honeybadger will write one pcap file per connection. Upon connection close honeybadger will delete the pcap logfile unless a TCP attack was detected. **warning**: this will cause lots of filesystem churn when sniffing high traffic interfaces. If you are using Linux then I suggest turning off swap and using a reasonably sized tmpfs for the logs directory. By default honeybadger write metadata-only logs which will NOT contain any packet payload data but will have various sensitive information about attack attempts such as: source and destination IP addresses and TCP ports, the type of TCP injection attack (there are several), time of the attack, TCP Sequence number boundaries of the injection. If you set -metadata_attack_log=false then honeybadger will log the attack packet payload AND the stream overlap.
+
+- **resource boundary options:** '-connection_max_buffer' and '-total_max_buffer' are used to limit the amount of page-cache pages that honeybadger can use for storing and reordering out-of-order-packets (much like TCP's mbuf datastructure). '-tcp_idle_timeout' is important as a stop-gap measure to prevent us from tracking connections that may have been closed without our knowing. '-max_ring_packets' is very important to set appropriately; it determines the size of the TCP reassembly ring buffer. This ring buffer is utilized for the retrospective analysis that allows us to determine if a given packet overlaps with previously reassembled stream segments. I estimate that this ring buffer should be set to a size that is roughly equivalent to the TCP window size of the connection... but maybe someone can help us pick a better heuristic? I usually set it to 40 and it works OK.
 
 
 how does HoneyBadger work?
@@ -45,8 +94,7 @@ data flow
 HoneyBadger passively reads packets off a network interface or a pcap file and if detection is triggered writes
 TCP attack reports, pcap packet log files and reasembled TCP streams.
 
-Here's a data flow diagram I quickly created to show some of the main components of the pipeline.
-It's not pretty... I want to learn R and make prettier graphs soon.
+Here's a data flow diagram that gives the basic idea of passively sniffing:
 
 .. image:: images/honeybadger_dfd1.png
 |
@@ -69,8 +117,7 @@ into sequence synchronization.
 attack detection
 ----------------
 
-Handshake hijack is fairly simple to detect once you can track the state changes of the TCP handshake... so I won't bother explaining
-it here. Segment veto and sloppy injection attacks are detected by means of a retrospective analysis.
+The Handshake hijack attack is a very well known TCP injection attack... and it's very simple to detect once you can track the state changes of the TCP handshake... so I won't bother explaining it here. Segment veto and sloppy injection attacks are detected by means of a retrospective analysis.
 The endpoint of the TCP connection that receives the attack will also receive a packet from the legitimate
 connection party. That packet's TCP segment will overlap with a previously transmitted stream segment.
 Such an overlapping TCP stream segment could be due to a TCP retransmission.
