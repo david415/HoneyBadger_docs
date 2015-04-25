@@ -78,7 +78,7 @@ Tor exit relay operator legal and ethical considerations
 
 - As far as my humble legal-system understanding is concerned it should be legal to operate an opt-in HoneyBadger service for users who consent to having their traffic recorded.
 
-- It is the author's firm belief that it is definitely legal to monitor your own traffic using HoneyBadger.
+- It is the author's firm belief that it is definitely legal to monitor your own traffic using HoneyBadger with the full-take logging features.
 
 
 simple Tor exit relay deployment
@@ -97,6 +97,14 @@ simple Tor exit relay deployment
 - Alternatively, this would record only TCP injection attack metadata (includes IP addresses and TCP port numbers but not packet payloads)::
 
   ./honeyBadger -max_concurrent_connections=100 -f="tcp port 443" -l=logs -connection_max_buffer=300 -total_max_buffer=3000 -tcp_idle_timeout=10m0s
+
+
+
+how to sniff only your own traffic on a Tor exit you control
+------------------------------------------------------------
+
+Client -> localsocks-proxy -> tor connection -> tor exit -> tor-exit-socks-proxy-server-> internet
+
 
 
 honeyBadger commandline arguments and usage
