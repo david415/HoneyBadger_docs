@@ -162,8 +162,14 @@ Here's a data flow diagram that gives the basic idea of passively sniffing:
 .. image:: images/honeybadger_dfd1.png
 |
 
+
 TCP injection attacks
 ---------------------
+
+
+TCP injection attacks are man-on-the-side attacks and are not the same thing as man-in-the-middle attacks. The distinction is important because it should be **much** cheaper to perform MotS attacks. Say for instance the attacker was able to pwn a router between Alice and Bob... In that case the attacker can simply perform a man-in-the-middle attack, modifying the packets before sending them. TCP injection attacks however could possibly be injected into the network from various locations that are not directly part of either route between Alice and Bob. Furthermore the attacker could use a large botnet of vulnerable Internet connected computers to use as "write only taps" to perform injection attacks. I believe that is what the NSA documents are referring to as "QUANTUM shooters". The attackers also need "read taps" in order to watch TCP traffic and determine recent TCP Sequence numbers. It is much more difficult to gain access to "read taps"; this requires pwning a switch or router that is in the direct path of Alice and Bob. However the cost of gaining read-only or readwrite access to one high traffic router will be amortized for all the downstream targets the attacker will pwn.
+
+Broadly speaking there are two categories of TCP injection attacks; handshake hijack and stream injection. I've added a couple more injection attack categories to the list; here #2 "segment veto" and #3 "sloppy injection" are nearly identical (honeybadger does not yet distinguish between them).
 
 1. handshake hijack: the attacker responds to a SYN packet with their SYN/ACK packet before the legit server.
 
@@ -173,32 +179,21 @@ TCP injection attacks
 
 4. out-of-order coalesce injection: injected packets are ahead of the next sequence. Injection of data takes place during coalescence.
 
-Each of these TCP attacks are really broader categories of attack... for instance sloppy injection that gradually brings client and server back
-into sequence synchronization.
+Each of these TCP attacks are really broader categories of attack... for instance a sloppy injection could be followed up with a procedure that gradually brings client and server back into TCP Sequence synchronization.
 
 
 handshake hijack detection
 --------------------------
 
-We do some very simple state tracking to detect handshake hijack attacks.
-
+We do some fairly simple state tracking to detect handshake hijack attacks. When a TCP connection receives a SYN/ACK packet during the handshake we record the Sequence and Acknowledgement numbers. A normal TCP SYN/ACK retransmission will have the exact same TCP Sequence number... however if we receive mulitple SYN/ACK packets with different Sequence numbers this indicates a handshake hijack attack attempt.
 
 
 stream injection detection
 --------------------------
 
-Segment veto and sloppy injection attacks are detected by means of a retrospective analysis.
-The endpoint of the TCP connection that receives the attack will also receive a packet from the legitimate
-connection party. That packet's TCP segment will overlap with a previously transmitted stream segment.
-Such an overlapping TCP stream segment could be due to a TCP retransmission.
-Therefore to distinguish it as an injection attack we compare the overlapping stream segments of the new packet versus the previously assembly
-TCP stream. If they are different then it's an injection attack. If they are equal then it's a TCP retransmission.
+Segment veto and sloppy injection attacks are detected by means of a retrospective analysis. HoneyBadger reassembles the TCP stream so that received packets with overlapping data can be compared. If their data is the same then of course the packet came from a normal TCP retransmission. However if their contents differ at all this must mean that a TCP injection attack attempt was made. HoneyBadger performs TCP directional state tracking, for each direction it keeps track of the "next Sequence" value. The reassembled TCP stream is written to a ring buffer... and this ring buffer is traversed for content comparison for each packet that has a Sequence proceeding the "next Sequence".
 
-In principal HoneyBadger of course **cannot** determine which packet
-was sent by an attacker and which was sent by the legit connection party. However we speculate that in the wild, injected packets
-will have interesting and varying TTLs! This and other header parameters might make it possible to develop some heuristics for distinguishing
-injected packets. That speculation aside... HoneyBadger's priority is to detect and record TCP attack attempts with the utmost precision.
-
+In principal HoneyBadger of course **cannot** determine which packet was sent by an attacker and which was sent by the legit connection party. However we speculate that in the wild, injected packets will have interesting and varying TTLs! This and other header parameters might make it possible to develop some heuristics for distinguishing injected packets. That speculation aside... HoneyBadger's priority is to detect and record TCP attack attempts with the utmost precision.
 
 
 autogenerated API documentation
@@ -291,3 +286,15 @@ https://godoc.org/github.com/david415/HoneyBadger#AttackReport
 |
 
 .. image:: images/honey_badger-white-sm-1.png
+|
+
+
+
+bibliographical references
+--------------------------
+- http://www.spiegel.de/international/world/new-snowden-docs-indicate-scope-of-nsa-preparations-for-cyber-battle-a-1013409.html
+- https://firstlook.org/theintercept/2014/03/12/nsa-plans-infect-millions-computers-malware/
+- http://www.theguardian.com/world/2013/oct/04/tor-attacks-nsa-users-online-anonymity
+- http://www.spiegel.de/international/world/the-nsa-uses-powerful-toolbox-in-effort-to-spy-on-global-networks-a-940969-3.html
+- https://firstlook.org/theintercept/document/2014/03/12/one-way-quantum/
+- http://www.spiegel.de/media/media-35664.pdf
