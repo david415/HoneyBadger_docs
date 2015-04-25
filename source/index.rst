@@ -33,8 +33,7 @@ development status
 
 Actively being developed.
 
-This early development version of HoneyBadger is useable right now... and I'm sure there are bugs;
-we are aware of several. Please use the github issue tracker to submit bug reports and feature requests!
+This early development version of HoneyBadger is useable right now... and I'm sure there are bugs; we are aware of several. I recommend reviewing our current issues before deploying HoneyBadger into a "production environment". Please use the github issue tracker to submit bug reports and feature requests!
 
 https://github.com/david415/HoneyBadger/issues
 
@@ -70,9 +69,8 @@ security considerations
 - HoneyBadger is designed to be somewhat denial-of-service resistant. We specifically allow the user to set resource boundary options for HoneyBadger so that continuous operation is possible.
 
 
-
-Tor exit relay operator legal and ethical considerations
---------------------------------------------------------
+Tor exit relay operator legal considerations
+--------------------------------------------
 
 - Telecommunications laws in your Tor exit relay country may prohibit recording user's content without their consent. HoneyBadger therefore does not record packets (pcap log) by default; and attack reports only record metadata. IP addresses and TCP ports are recorded in the attack metadata reports... this sensitive data should be anonymized before making it public.
 
@@ -99,12 +97,39 @@ simple Tor exit relay deployment
   ./honeyBadger -max_concurrent_connections=100 -f="tcp port 443" -l=logs -connection_max_buffer=300 -total_max_buffer=3000 -tcp_idle_timeout=10m0s
 
 
+how to turn HoneyBadger into a honeyPot
+---------------------------------------
+
+In the context of TCP injection attacks, a honeypot would be a way to intentionally "attract" these injection attacks so that HoneyBadger can record the packet payloads and metadata about the attacks. This sort of tactic could be profitable for individuals trying to collect attack statistics or zero-days. It could very well be that searching for certain keywords or visiting certain websites and online forums puts individuals at a higher risk for targetted surveillance and thus more likely to be TCP injection attacked. If that's the case then your browser + HoneyBadger could be used as a honeypot for "interesting" data collection. It should be obvious that the browser should thoroughly sandboxed for experiments like this because it will most likely get pwned. For this type of scenario it seems better to not even run the browser on any of your own person computer equipment at all... but instead run the Tor Browser Bundle on a cheap remote VPS (virtual private server). You can use ssh + vnc to interact with the browser remotely. I am a fan of this pure python VNC client that a friend pointed me to:
+
+https://code.google.com/p/python-vnc-viewer
+
+
+You can also run the Tor Browser Bundle and other browsers on a Raspberry Pi 2 running archlinux arm. This hardware might be cheaper to deal with and easier to isolate. I've successfully built the Tor Browser Bundle for the Raspberry Pi 2 running ARM Archlinux; details here:
+
+https://trac.torproject.org/projects/tor/ticket/12631#comment:6
+
+
 
 how to sniff only your own traffic on a Tor exit you control
 ------------------------------------------------------------
 
+Soon I'd like to write more here about various ways that you can isolate your own traffic on a Tor exit relay you control. Here's one such idea:
+
 Client -> localsocks-proxy -> tor connection -> tor exit -> tor-exit-socks-proxy-server-> internet
 
+However... Firefox/TBB currently does not currently support Socks Proxy username/password authentication... so we should probably use a different tactic to isolate our traffic?
+
+
+
+what to do with HoneyBadger collected data
+------------------------------------------
+
+This data could expose tradecraft pwn-to-surveil secrets as well as botnet location information. These TCP injection botnet locations will of course not be the IP addresses that they spoof in their injection attack transmissions. However, by observing these fake botnet from various vantage points within the network topology it may be possible to increase the acuracy of our understanding of the attackers locations. (provide link to Nicholas Hopper's paper on circumventing censorship network infrastructure for relevant ideas)
+
+The other reason to collect HoneyBadger data is to try an understand how the attack works... and to perhaps catch a zero day. Some of the more sophisticated attacks may have several attack phases meant to obscure the attackers locations or the attack zero-day itself.
+
+HoneyBadger is very much a tool for hackers/software developers and as such doesn't provide you with any tools for analyzing the data that it collects.
 
 
 honeyBadger commandline arguments and usage
@@ -167,7 +192,8 @@ TCP injection attacks
 ---------------------
 
 
-TCP injection attacks are man-on-the-side attacks and are not the same thing as man-in-the-middle attacks. The distinction is important because it should be **much** cheaper to perform MotS attacks. Say for instance the attacker was able to pwn a router between Alice and Bob... In that case the attacker can simply perform a man-in-the-middle attack, modifying the packets before sending them. TCP injection attacks however could possibly be injected into the network from various locations that are not directly part of either route between Alice and Bob. Furthermore the attacker could use a large botnet of vulnerable Internet connected computers to use as "write only taps" to perform injection attacks. I believe that is what the NSA documents are referring to as "QUANTUM shooters". The attackers also need "read taps" in order to watch TCP traffic and determine recent TCP Sequence numbers. It is much more difficult to gain access to "read taps"; this requires pwning a switch or router that is in the direct path of Alice and Bob. However the cost of gaining read-only or readwrite access to one high traffic router will be amortized for all the downstream targets the attacker will pwn.
+TCP injection attacks are man-on-the-side attacks and are not the same thing as man-in-the-middle attacks. The distinction is important because it should be **much** easier to hide and perhaps cheaper to perform man-on-the-side attacks. Say for instance the attacker was able to pwn a router between Alice and Bob... In that case the attacker can simply perform a man-in-the-middle attack, modifying the packets before sending them. TCP injection attacks however could possibly be injected into the network from various locations that are not directly part of either route between Alice and Bob. Furthermore the attacker could use a large botnet of vulnerable Internet connected computers to use as "write only taps" to perform injection attacks. I believe that is what the NSA documents are referring to as "QUANTUM shooters". The attackers also need "read taps" in order to watch TCP traffic and determine recent TCP Sequence numbers. It is much more difficult to gain access to "read taps"; Each TCP injection attack needs to have a "read tap" on one of the hops on the route between Alice and Bob. However the cost of gaining read-only or readwrite access to one high traffic router will be amortized for all the downstream targets the attacker will pwn. Perhaps it would be more difficult to notice that the switch or router was pwned because it is not being used to perform MITM attacks. We know from various Snowden documents that their now exist specialized industrial telco-mount units that perform these TCP injection attacks. FinFlyISP seems to be one such product that performs these TCP injection attacks with malware payload. [7]_
+
 
 Broadly speaking there are two categories of TCP injection attacks; handshake hijack and stream injection. I've added a couple more injection attack categories to the list; here #2 "segment veto" and #3 "sloppy injection" are nearly identical (honeybadger does not yet distinguish between them).
 
@@ -226,25 +252,25 @@ procedure
 
   .. code-block:: bash
 
-    ./honeyBadger -i=lo -f="tcp port 9666"  -l="."
+  ./honeyBadger -i=lo -f="tcp port 9666"  -l="."
 
 3. run ``sprayInjector`` with these arguments
 
   .. code-block:: bash
 
-    ./sprayInjector -d=127.0.0.1 -e=9666 -f="tcp" -i=lo
+  ./sprayInjector -d=127.0.0.1 -e=9666 -f="tcp" -i=lo
 
 4. start the netcat server
 
   .. code-block:: bash
 
-    nc -l -p 9666
+  nc -l -p 9666
 
 5. start the netcat client
 
   .. code-block:: bash
 
-    nc 127.0.0.1 9666
+  nc 127.0.0.1 9666
 
 6. In this next step we enter some data on the netcat server so that it will send it to the netcat client that is connected until the sprayInjector prints a log message containing "packet spray sent!" In that cause the TCP connection will have been sloppily injected. The injected data should be visible in the netcat client's output.
 
@@ -252,23 +278,23 @@ procedure
 
   .. code-block:: none
 
-    $ ls 127*
-    127.0.0.1:43716-127.0.0.1:9666.pcap  127.0.0.1:9666-127.0.0.1:43716.attackreport.json
+  $ ls 127*
+  127.0.0.1:43716-127.0.0.1:9666.pcap  127.0.0.1:9666-127.0.0.1:43716.attackreport.json
 
 
 It's what you'd expect... the pcap file can be viewed and analyzed in Wireshark and other similar tools.
 The *127.0.0.1:9666-127.0.0.1:43716.attackreport.json* file contains JSON report structures.
-The attack reports contains important information that is highly relevant to your interests such as:
+The attack reports contains important information that is highly relevant to your interests such as::
 
-  * type of TCP injection attack
-  * flow of attack (meaning srcip:srcport-dstip:dstport)
-  * time of attack
-  * payload of packet with overlaping stream segment (in base64 format)
-  * previously assembled stream segment that overlaps with packet payload (in base64 format)
-  * TCP sequence of packet
-  * end sequence of packet
-  * overlap start offset is the number of bytes from the beginning of the packet payload that we have available among the reassembled stream segments for retrospective analysis
-  * overlap end offset is the number of bytes from the end of the packet payload that we have in our reassembled stream segments...
+* type of TCP injection attack
+* flow of attack (meaning srcip:srcport-dstip:dstport)
+* time of attack
+* payload of packet with overlaping stream segment (in base64 format)
+* previously assembled stream segment that overlaps with packet payload (in base64 format)
+* TCP sequence of packet
+* end sequence of packet
+* overlap start offset is the number of bytes from the beginning of the packet payload that we have available among the reassembled stream segments for retrospective analysis
+* overlap end offset is the number of bytes from the end of the packet payload that we have in our reassembled stream segments...
 
 https://godoc.org/github.com/david415/HoneyBadger#AttackReport
 
@@ -292,9 +318,10 @@ https://godoc.org/github.com/david415/HoneyBadger#AttackReport
 
 bibliographical references
 --------------------------
-- http://www.spiegel.de/international/world/new-snowden-docs-indicate-scope-of-nsa-preparations-for-cyber-battle-a-1013409.html
-- https://firstlook.org/theintercept/2014/03/12/nsa-plans-infect-millions-computers-malware/
-- http://www.theguardian.com/world/2013/oct/04/tor-attacks-nsa-users-online-anonymity
-- http://www.spiegel.de/international/world/the-nsa-uses-powerful-toolbox-in-effort-to-spy-on-global-networks-a-940969-3.html
-- https://firstlook.org/theintercept/document/2014/03/12/one-way-quantum/
-- http://www.spiegel.de/media/media-35664.pdf
+.. [1] http://www.spiegel.de/international/world/new-snowden-docs-indicate-scope-of-nsa-preparations-for-cyber-battle-a-1013409.html
+.. [2] https://firstlook.org/theintercept/2014/03/12/nsa-plans-infect-millions-computers-malware/
+.. [3] http://www.theguardian.com/world/2013/oct/04/tor-attacks-nsa-users-online-anonymity
+.. [4] http://www.spiegel.de/international/world/the-nsa-uses-powerful-toolbox-in-effort-to-spy-on-global-networks-a-940969-3.html
+.. [5] https://firstlook.org/theintercept/document/2014/03/12/one-way-quantum/
+.. [6] http://www.spiegel.de/media/media-35664.pdf
+.. [7] https://citizenlab.org/2014/08/cat-video-and-the-death-of-clear-text/
