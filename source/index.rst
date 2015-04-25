@@ -62,6 +62,24 @@ what does HoneyBadger do and **not** do?
 - HoneyBadger is nothing like the more general purpose tools like Snort, Bro or Wireshark.
 
 
+security considerations
+-----------------------
+
+- HoneyBadger is written in golang which should be much safer than C. However, we do currently depend on libpcap and we'd like to get rid of this dependency specifically to eliminate any security vulnerabilities that using libpcap might have. See github issue https://github.com/david415/HoneyBadger/issues/43
+
+- HoneyBadger is designed to be somewhat denial-of-service resistant. We specifically allow the user to set resource boundary options for HoneyBadger so that continuous operation is possible.
+
+
+
+Tor exit relay operator legal and ethical considerations
+--------------------------------------------------------
+
+- Telecommunications laws in your Tor exit relay country may prohibit recording user's content without their consent. HoneyBadger therefore does not record packets (pcap log) by default; and attack reports only record metadata. IP addresses and TCP ports are recorded in the attack metadata reports... this sensitive data should be anonymized before making it public.
+
+- As far as my humble legal-system understanding is concerned it should be legal to operate an opt-in HoneyBadger service for users who consent to having their traffic recorded.
+
+- It is the author's firm belief that it is definitely legal to monitor your own traffic using HoneyBadger.
+
 
 honeyBadger commandline arguments and usage
 -------------------------------------------
