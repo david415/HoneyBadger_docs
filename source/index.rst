@@ -167,9 +167,9 @@ TCP injection attacks
 
 1. handshake hijack: the attacker responds to a SYN packet with their SYN/ACK packet before the legit server.
 
-2. segment veto: the injected packet(s) are the exact same size as those sent out by the legit party. Client and server remain in sync.
+2. segment veto: the injected packet(s) are the exact same size as those sent out by the legit party. Client and server remain in sync after data is injected.
 
-3. sloppy injection: the injected packet(s) are different sizes than that of the legit party. Client and server fall out of sync.
+3. sloppy injection: the injected packet(s) are different sizes than that of the legit party. Client and server fall out of sync after injection.
 
 4. out-of-order coalesce injection: injected packets are ahead of the next sequence. Injection of data takes place during coalescence.
 
@@ -177,10 +177,17 @@ Each of these TCP attacks are really broader categories of attack... for instanc
 into sequence synchronization.
 
 
-attack detection
-----------------
+handshake hijack detection
+--------------------------
 
-The Handshake hijack attack is a very well known TCP injection attack... and it's very simple to detect once you can track the state changes of the TCP handshake... so I won't bother explaining it here. Segment veto and sloppy injection attacks are detected by means of a retrospective analysis.
+We do some very simple state tracking to detect handshake hijack attacks.
+
+
+
+stream injection detection
+--------------------------
+
+Segment veto and sloppy injection attacks are detected by means of a retrospective analysis.
 The endpoint of the TCP connection that receives the attack will also receive a packet from the legitimate
 connection party. That packet's TCP segment will overlap with a previously transmitted stream segment.
 Such an overlapping TCP stream segment could be due to a TCP retransmission.
