@@ -42,15 +42,29 @@ https://github.com/david415/HoneyBadger/issues
 what does HoneyBadger do and **not** do?
 ----------------------------------------
 
-HoneyBadger detects TCP injection attack attempts AND cannot know if an attack was successful.
-However, I suspect that in the wild TCP attacks will have differing TTLs and other clues that
-will help us determine if the attack was successful or not.
+**DO**
 
-HoneyBadger does NOT do what snort and bro do. Nor does honeybadger do what wireshark does. HoneyBadger is a passively sniffing TCP protocol analyzer whose **ONLY** purpose in life is to detect (and optionally record) TCP injection attacks.
+- one purpose in life... To detect (and optionally record) TCP injection attacks and attempts.
+
+- passively analyze TCP traffic
 
 
-how do i use this thing?
-------------------------
+**NOT DO**
+
+- HoneyBadger is in fact not a "honey pot"
+
+- HoneyBadger does not send packets
+
+- HoneyBadger does not detect man-in-the-middle attacks
+
+- HoneyBadger does not determine if an attack attempt was successful (I suspect that in the wild TCP attacks will have differing TTLs and other clues that will help us determine if the attack was successful or not)
+
+- HoneyBadger is nothing like the more general purpose tools like Snort, Bro or Wireshark.
+
+
+
+honeyBadger commandline arguments and usage
+-------------------------------------------
 
 I will explain each commandline options and show usage examples below.
 
