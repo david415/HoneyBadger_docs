@@ -81,6 +81,24 @@ Tor exit relay operator legal and ethical considerations
 - It is the author's firm belief that it is definitely legal to monitor your own traffic using HoneyBadger.
 
 
+simple Tor exit relay deployment
+--------------------------------
+
+- Linux users should run honeyBadger as an unprivileged user. First run setcap as root like so::
+
+  setcap cap_net_raw,cap_net_admin=eip honeyBadger
+
+- Create RAM backed filesystem for your honeyBadger log directory. if you use Linux then you chose between ramfs and tmpfs. I recommend turning off swap and using tmpfs... this way you can limit the size of the log directory.
+
+- Here's an example running honeyBadger for a Tor exit relay with OR-port 443 and full-take logging::
+
+  ./honeyBadger -max_concurrent_connections=100 -f="tcp port 443" -l=logs -log_packets=true -metadata_attack_log=false -connection_max_buffer=300 -total_max_buffer=3000 -tcp_idle_timeout=10m0s
+
+- Alternatively, this would record only TCP injection attack metadata (includes IP addresses and TCP port numbers but not packet payloads)::
+
+  ./honeyBadger -max_concurrent_connections=100 -f="tcp port 443" -l=logs -connection_max_buffer=300 -total_max_buffer=3000 -tcp_idle_timeout=10m0s
+
+
 honeyBadger commandline arguments and usage
 -------------------------------------------
 
