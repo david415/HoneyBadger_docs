@@ -14,12 +14,16 @@ HoneyBadger
   :target: https://flattr.com/submit/auto?user_id=david415&url=https%3A%2F%2Fgithub.com%2Fdavid415%2FHoneyBadger
 |
 
+
 **TCP attack inquisitor and 0-day catcher.**
 
-HoneyBadger is a comprehensive TCP stream analysis tool for detecting and recording TCP attacks.
-HoneyBadger includes a variety of TCP stream injections attacks which will prove that the TCP attack detection is reliable.
-HoneyBadger is modern software written in Golang to deal with TCP's very olde security issues.
-It is free software, using the GPLv3 and the source code is available on github:
+- HoneyBadger is primarily a comprehensive TCP stream analysis tool for detecting and recording TCP attacks.
+
+- HoneyBadger is modern software written in Golang to deal with TCP's very olde injection vulnerabilities.
+
+- HoneyBadger includes a variety of TCP stream injection attacks written in golang. (2 so far)
+
+- Free as in GPLv3 (except for small sections of Google's BSD licensed code) and the source code is available on github:
 
 * https://github.com/david415/HoneyBadger
 
@@ -27,9 +31,10 @@ It is free software, using the GPLv3 and the source code is available on github:
 development status
 ------------------
 
-HoneyBadger is useable right now... and I'm sure there are bugs.
-We'd like to fix these problems; we've got an issue tracker that you
-can use to submit bug reports and feature requests!
+Actively being developed.
+
+This early development version of HoneyBadger is useable right now... and I'm sure there are bugs;
+we are aware of several. Please use the github issue tracker to submit bug reports and feature requests!
 
 https://github.com/david415/HoneyBadger/issues
 
