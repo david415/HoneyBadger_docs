@@ -10,8 +10,8 @@ abstract
 "Puppet masters" refers to well funded state/world-class adversaries that use botnets to
 act as TCP injection attack puppet "shooters" assisting in the off-path injection attack facilitated
 by offsite attack logic and tier one ISP infiltration via read-only network tap.
-Puppets can also refer to the computers that get pwned by the injection attacks because the
-attacker essentially become the true masters of the pwned computers.
+Puppets can also refer to the computers that get compromised by the injection attacks because the
+attacker essentially become the true masters of the compromised computers.
 
 It is possible to create a honeypot-like system that may diminish the effective secrecy of TCP injection attacks.
 Additionally these deployments of honeybadger could provide enlightening attack statistics that may prove useful
@@ -29,7 +29,7 @@ could be profitable for individuals trying to collect attack statistics or zero-
 keywords or visiting certain websites and online forums puts individuals at a higher risk for targetted surveillance and thus more likely
 to be TCP injection attacked.
 
-When conducting these experiments the browser should be thoroughly sandboxed because it will most likely get pwned.
+When conducting these experiments the browser should be thoroughly sandboxed because it will most likely get compromised.
 Clearly Qubes OS is the most secure and convenient choice for software sandboxing insecure applications such as web browsers.
 
 https://www.qubes-os.org/
