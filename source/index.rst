@@ -192,10 +192,49 @@ TCP injection attacks
 ---------------------
 
 
-TCP injection attacks are man-on-the-side attacks and are not the same thing as man-in-the-middle attacks. The distinction is important because it should be **much** easier to hide and perhaps cheaper to perform man-on-the-side attacks. Say for instance the attacker was able to pwn a router between Alice and Bob... In that case the attacker can simply perform a man-in-the-middle attack, modifying the packets before sending them. TCP injection attacks however could possibly be injected into the network from various locations that are not directly part of either route between Alice and Bob. Furthermore the attacker could use a large botnet of vulnerable Internet connected computers to use as "write only taps" to perform injection attacks. I believe that is what the NSA documents are referring to as "QUANTUM shooters". The attackers also need "read taps" in order to watch TCP traffic and determine recent TCP Sequence numbers. It is much more difficult to gain access to "read taps"; Each TCP injection attack needs to have a "read tap" on one of the hops on the route between Alice and Bob. However the cost of gaining read-only or readwrite access to one high traffic router will be amortized for all the downstream targets the attacker will pwn. Perhaps it would be more difficult to notice that the switch or router was pwned because it is not being used to perform MITM attacks. We know from various Snowden documents that their now exist specialized industrial telco-mount units that perform these TCP injection attacks. FinFlyISP seems to be one such product that performs these TCP injection attacks with malware payload. [7]_
+TCP injection attacks are man-on-the-side attacks (MOS) [1]_ and are not the same thing as man-in-the-middle attacks (MITM).
+In the MOS scenario the attacker cannot prevent the propagation of packets between link A -> B or B -> A but instead can
+read and write packets on the same network interface(s)... in other more eloquent words from Wikipedia: "Instead of completely
+controlling a network node as in a man-in-the-middle attack, the attacker only has regular access to the communication
+channel, which allows him to read the traffic and insert new messages, but not to modify or delete messages sent by other
+participants." [1]_ Much of the classic literature about TCP injection attacks considers TCP injection in the context of probabilitistic
+TCP Sequence number prediction. [2]_ [3]_ These olde school attacks focused more on exploiting TCP Sequence number prediction and side
+channels, however TCP injection attacks are essentially a form of timing attack. Since the various improvements to the TCP's initial
+Initial Sequence Numbers (ISNs) [4]_ [5]_, TCP was widely believed to not be vulnerable to injection attacks, however TCP has
+remained vulnerable to various Sequence prediction based injection attacks, including side channel inference attacks [6]_ [7]_ [8]_.
+Various so called classic and modern TCP injection attacks can involve an "off-path injection". These are remarkable deployment tactics where
+the attack packets originate from distributed "puppet" computers that are not directly in either route between host Alice and host Bob.
+Ingress filtering may make this IP spoofing between networks less commonly available than before but still feasible today [6]_.
 
+These puppets behave as "write-ony network taps" in so far as they have the ability to inject packets but not read. It is my understanding
+that the secret NSA documents refer to these puppet computers as "QUANTUM shooters" [9]_. According to a Der Spiegal article about leaked
+NSA documents, these puppets create a layer of indirection that might be used to make TCP injection attacks harder to track down:
+"And computers infected with Straitbizarre can be turned into disposable and non-attributable 'shooter' nodes." [10]_
+We've also seen other code names for the shooters such as Straighbizarre and Daredevil. [11]_ According to a Guardian article the NSA
+may be using a topologically advantageous placement of servers in the network to win the packet race: "the NSA places secret servers,
+codenamed Quantum, at key places on the internet backbone. This placement ensures that they can react faster than other websites can." [12]_ [13]_
+One Wired article mentions that the NSA could be using MoS attacks rather than MITM attacks because it fit's their security domain
+isolation policy with regards to where attack logic is placed. [14]_ Any world class attacker such as the NSA would likely have measures
+to prevent leaking their 0-day to security researchers and other attackers. [15]_
 
-Broadly speaking there are two categories of TCP injection attacks; handshake hijack and stream injection. I've added a couple more injection attack categories to the list; here #2 "segment veto" and #3 "sloppy injection" are nearly identical (honeybadger does not yet distinguish between them).
+According to various security researchers and leaked documents, there is the so called lawful intercept industry where governments and
+other orgranizations with known track records of human right violations can illegally purchase "hacking appliances". [16]_ [17]_ [18]_
+These MoS appliances might offer an advantage over MITM attacks in that they may be very simple to deploy. Perhaps by plugging into
+a mirrored switch port. [20]_
+
+Details are not perfectly clear regarding how the packet race is actually won either for the NSA Quantum deployments nor for
+the specialized MoS "hacking appliances", however it could be that these appliances posses a high probability
+of success at winning the race due to being built with specialized high speed signal processing components that are capable of operating at
+line speeds. [16]_ [17]_ [18]_ It should be obvious that there exist multiple "hacking" entities world wide that posses the capability to perform
+these TCP injection attacks with a very high probability of success, however they may not all have the same operational security policies.
+For instance if the NSA had a policy of not deploying attack logic to insecure systems or physical facilities then that might be a reason
+for them to prefer an offsite MoS approach over an onsite MITM. The attacker might have an offsite command and control (C&C) center which passes
+instructions to these "shooter" puppets, which then perform the actual TCP injection attack on behalf of the C&C.
+
+Broadly speaking there are two categories of TCP injection attacks; handshake hijack and stream injection.
+I've added a couple more injection attack categories to the list; here #2 "segment veto" and #3 "sloppy injection"
+are nearly identical (honeybadger does not yet distinguish between them).
+
 
 1. handshake hijack: the attacker responds to a SYN packet with their SYN/ACK packet before the legit server.
 
@@ -205,7 +244,8 @@ Broadly speaking there are two categories of TCP injection attacks; handshake hi
 
 4. out-of-order coalesce injection: injected packets are ahead of the next sequence. Injection of data takes place during coalescence.
 
-Each of these TCP attacks are really broader categories of attack... for instance a sloppy injection could be followed up with a procedure that gradually brings client and server back into TCP Sequence synchronization.
+Each of these TCP attacks are really broader categories of attack... for instance a sloppy injection could be followed up with a
+procedure that gradually brings client and server back into TCP Sequence synchronization.
 
 
 handshake hijack detection
@@ -318,10 +358,24 @@ https://godoc.org/github.com/david415/HoneyBadger#AttackReport
 
 bibliographical references
 --------------------------
-.. [1] http://www.spiegel.de/international/world/new-snowden-docs-indicate-scope-of-nsa-preparations-for-cyber-battle-a-1013409.html
-.. [2] https://firstlook.org/theintercept/2014/03/12/nsa-plans-infect-millions-computers-malware/
-.. [3] http://www.theguardian.com/world/2013/oct/04/tor-attacks-nsa-users-online-anonymity
-.. [4] http://www.spiegel.de/international/world/the-nsa-uses-powerful-toolbox-in-effort-to-spy-on-global-networks-a-940969-3.html
-.. [5] https://firstlook.org/theintercept/document/2014/03/12/one-way-quantum/
-.. [6] http://www.spiegel.de/media/media-35664.pdf
-.. [7] https://citizenlab.org/2014/08/cat-video-and-the-death-of-clear-text/
+
+.. [1] https://en.wikipedia.org/wiki/Man-on-the-side_attack
+.. [2] https://en.wikipedia.org/wiki/TCP_sequence_prediction_attack
+.. [3] http://www.tech-faq.com/tcp-sequence-prediction-attack.html
+.. [4] https://tools.ietf.org/html/rfc1948
+.. [5] https://tools.ietf.org/html/rfc6528
+.. [6] http://arxiv.org/pdf/1208.2357.pdf
+.. [7] http://www.ieee-security.org/TC/SP2012/papers/4681a347.pdf
+.. [8] http://phrack.org/issues/64/13.html
+.. [9] http://www.spiegel.de/media/media-35664.pdf
+.. [10] http://www.spiegel.de/international/world/new-snowden-docs-indicate-scope-of-nsa-preparations-for-cyber-battle-a-1013409.html
+.. [11] http://www.spiegel.de/media/media-35667.pdf
+.. [12] http://www.theguardian.com/world/2013/oct/04/tor-attacks-nsa-users-online-anonymity
+.. [13] http://www.spiegel.de/international/world/the-nsa-uses-powerful-toolbox-in-effort-to-spy-on-global-networks-a-940969-3.html
+.. [14] https://www.wired.com/2014/03/quantum/
+.. [15] https://www.schneier.com/blog/archives/2013/10/the_nsas_new_ri.html
+.. [16] https://citizenlab.org/2014/08/cat-video-and-the-death-of-clear-text/
+.. [17] https://cpunks.org/pipermail/cypherpunks/2014-August/005393.html
+.. [18] https://wikileaks.org/spyfiles/files/0/296_GAMMA-201110-FinFly_Web.pdf
+.. [19] http://www.washingtonpost.com/world/national-security/spyware-tools-allow-buyers-to-slip-malicious-code-into-youtube-videos-microsoft-pages/2014/08/15/31c5696c-249c-11e4-8593-da634b334390_story.html
+.. [20] http://c-skills.blogspot.de/2013/11/killing-schrodingers-cat.html
