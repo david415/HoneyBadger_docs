@@ -92,13 +92,17 @@ These MoS appliances might offer an advantage over MITM attacks in that they may
 a mirrored switch port. [20]_
 
 Details are not perfectly clear regarding how the packet race is actually won either for the NSA Quantum deployments nor for
-the specialized MoS "hacking appliances", however it could be that these appliances posses a high probability
-of success at winning the race due to being built with specialized high speed signal processing components that are capable of operating at
-line speeds. [16]_ [17]_ [18]_ It should be obvious that there exist multiple "hacking" entities world wide that posses the capability to perform
+the specialized MoS "hacking appliances", however there are plausible theories for both cases. It could be that these MoS appliances
+posses a high success rate due to being built with specialized high speed signal processing components that are capable of operating at
+line speeds. [16]_ [17]_ [18]_ The world-class state adversaries utilizing the backbone-sniffing->C&C->puppet shooter pipeline approach
+may utilize their own network infrastructure to ensure their winning the packet latency race against the legitimate actors.
+
+It should be obvious that there exist multiple entities world wide that posses the capability to perform
 these TCP injection attacks with a very high probability of success, however they may not all have the same operational security policies.
-For instance if the NSA had a policy of not deploying attack logic to insecure systems or physical facilities then that might be a reason
-for them to prefer an offsite MoS approach over an onsite MITM. The attacker might have an offsite command and control (C&C) center which passes
-instructions to these "shooter" puppets, which then perform the actual TCP injection attack on behalf of the C&C.
+For instance perhaps the NSA has a policy of not deploying attack logic to insecure systems or physical facilities. I speculate that
+they have a security domain isolation policy that causes them to prefer an offsite MoS approach over an onsite MoS or MITM. The attacker
+might have an offsite command and control (C&C) center which passes instructions to these "shooter" puppets, who then perform the actual
+TCP injection attack on behalf of the C&C.
 
 
 TCP injection attack categories
