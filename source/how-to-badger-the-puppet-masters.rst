@@ -28,7 +28,7 @@ an application that will use a plain-text TCP protocol and may become compromise
 and a TCP injection attack detection system with (optional) full-take logging (i.e. HoneyBadger).
 
 We further speculate that honeyBadger could assist computer security researchers who use various tactics to "attract"
-injection attacks. In that case, HoneyBadger can be used record the packet payloads and metadata about the attacks.
+injection attacks. In that case, HoneyBadger can be used to record the packet payloads and metadata about the attacks.
 These attack attraction tactics could range from custome automated web crawlers or programs to control tbb/firefox
 to manually utilizing a sandboxed browser to visit "high risk" web sites and use "high risk" search terms. In this case
 we mean high risk to indicate that these may be XKeyscore "Selectors" utilized by the "five-eyes" for automated
@@ -97,12 +97,11 @@ posses a high success rate due to being built with specialized high speed signal
 line speeds. [16]_ [17]_ [18]_ The world-class state adversaries utilizing the backbone-sniffing->C&C->puppet shooter pipeline approach
 may utilize their own network infrastructure to ensure their winning the packet latency race against the legitimate actors.
 
-It should be obvious that there exist multiple entities world wide that posses the capability to perform
-these TCP injection attacks with a very high probability of success, however they may not all have the same operational security policies.
-For instance perhaps the NSA has a policy of not deploying attack logic to insecure systems or physical facilities. I speculate that
-they have a security domain isolation policy that causes them to prefer an offsite MoS approach over an onsite MoS or MITM. The attacker
-might have an offsite command and control (C&C) center which passes instructions to these "shooter" puppets, who then perform the actual
-TCP injection attack on behalf of the C&C.
+There exist multiple entities world wide that posses the capability to perform these TCP injection attacks with a very high probability
+of success, however they may not all have the same operational security policies. For instance perhaps the NSA has a policy of not
+deploying attack logic to insecure systems or physical facilities. I speculate that they have a security domain isolation policy
+that causes them to prefer an offsite MoS approach over an onsite MoS or MITM. The attacker might have an offsite command and
+control (C&C) center which passes instructions to these "shooter" puppets, who then perform the actual TCP injection attack on behalf of the C&C.
 
 
 TCP injection attack categories
