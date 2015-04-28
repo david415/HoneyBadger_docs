@@ -8,40 +8,48 @@ abstract
 --------
 
 "Puppet masters" refers to well funded state/world-class adversaries that use botnets to
-act as TCP injection attack puppet "shooters" assisting in the off-path injection attack facilitated
-by offsite attack logic and tier one ISP infiltration via read-only network tap.
-Puppets can also refer to the computers that get compromised by the injection attacks because the
-attacker essentially become the true masters of the compromised computers.
+distribute TCP injection attacks. Puppets assist but do not lead attacks,
+in these off-path TCP injection attack scenarios there are offsite command and control centers
+that contain the attack logic. Puppets can also refer to the computers that get compromised by
+the injection attacks because the attackers essentially become the true masters of the compromised computers.
 
-It is possible to create a honeypot-like system that may diminish the effective secrecy of TCP injection attacks.
-Additionally these deployments of honeybadger could provide enlightening attack statistics that may prove useful
-to security researchers, perhaps contributing to the collection of zero days for the purpose of further study by
-malware analysts and responsible disclosure to software vendors.
-
+Widespread adoption of TCP injection attack detection software such as honeyBadger will diminish the effective
+secrecy of these attacks upon the Tor network and other networks as well. Additionally these deployments of
+honeybadger could provide enlightening attack statistics that may prove useful to security researchers,
+contributing to the collection of zero days for the purpose of further study by malware analysts
+and responsible disclosure to software vendors.
 
 
 how to turn HoneyBadger into a honeyPot
 ---------------------------------------
 
-In the context of TCP injection attacks, a honeypot might include two main compoenents; honeyBadger and a mechanism to intentionally
-"attract" these injection attacks so that HoneyBadger can record the packet payloads and metadata about the attacks. This sort of tactic
-could be profitable for individuals trying to collect attack statistics or zero-days. It could very well be that searching for certain
-keywords or visiting certain websites and online forums puts individuals at a higher risk for targetted surveillance and thus more likely
-to be TCP injection attacked.
+In the context of TCP injection attacks, a honeypot might include two main sandboxed componenents;
+an application that will use a plain-text TCP protocol and may become compromised when it receives a TCP injection attack,
+and a TCP injection attack detection system with (optional) full-take logging (i.e. HoneyBadger).
 
-When conducting these experiments the browser should be thoroughly sandboxed because it will most likely get compromised.
+We further speculate that honeyBadger could assist computer security researchers who use various tactics to "attract"
+injection attacks. In that case, HoneyBadger can be used record the packet payloads and metadata about the attacks.
+These attack attraction tactics could range from custome automated web crawlers or programs to control tbb/firefox
+to manually utilizing a sandboxed browser to visit "high risk" web sites and use "high risk" search terms. In this case
+we mean high risk to indicate that these may be XKeyscore "Selectors" utilized by the "five-eyes" for automated
+computer network exploitation (CNE). However, any country with Internet access should be able to perform these
+types of attacks upon traffic traversing their networks.
+
+
+sandboxing
+----------
+
+When conducting these experiments the application should be thoroughly sandboxed because it will most likely become compromised.
 Clearly Qubes OS is the most secure and convenient choice for software sandboxing insecure applications such as web browsers.
 
 https://www.qubes-os.org/
 
-
 Perhaps some researchers will operate with the threat model assumption that for this type of scenario it is better to not even run
-the browser on any of your own person computer equipment at all. If honeypot`ing attackers of Tor users then you have the options of
-instead running the Tor Browser Bundle on a cheap remote VPS (virtual private server). You can use ssh + vnc to interact with the
-browser remotely. I am a fan of this pure python VNC client that a friend pointed me to:
+the compromised application on any of your own person computer equipment at all. If your goal is to expose the attacks upon Tor
+users then you have the option to instead run the Tor Browser Bundle on a cheap remote VPS (virtual private server). You can use
+ssh + vnc to interact with the browser remotely. I am a fan of this pure python VNC client that a friend pointed me to:
 
 https://code.google.com/p/python-vnc-viewer
-
 
 You can also run the Tor Browser Bundle and other browsers on a Raspberry Pi 2 running archlinux arm. This hardware might be
 cheaper to replace and easier to isolate. I've successfully built the Tor Browser Bundle for the Raspberry Pi 2 running ARM
@@ -92,6 +100,10 @@ For instance if the NSA had a policy of not deploying attack logic to insecure s
 for them to prefer an offsite MoS approach over an onsite MITM. The attacker might have an offsite command and control (C&C) center which passes
 instructions to these "shooter" puppets, which then perform the actual TCP injection attack on behalf of the C&C.
 
+
+TCP injection attack categories
+-------------------------------
+
 Broadly speaking there are two categories of TCP injection attacks; handshake hijack and stream injection.
 I've added a couple more stream injection attack sub-categories to the list; here #2 "segment veto" and #3 "sloppy injection"
 are nearly identical (honeybadger does not yet distinguish between them), whereas coalesce injection is quite different in that
@@ -141,6 +153,19 @@ In principal HoneyBadger of course **cannot** determine which packet was sent by
 However we speculate that in the wild, injected packets will have interesting and varying TTLs. This and other header fields
 might make it possible to develop some heuristics for distinguishing injected packets. That speculation aside, HoneyBadger's
 priority is to detect and record TCP attack attempts with the utmost precision.
+
+
+
+future work
+-----------
+
+*coming soon*
+
+
+conclusion
+----------
+
+*coming soon*
 
 
 
