@@ -7,24 +7,46 @@ how to badger the puppet masters
 abstract
 --------
 
-"Puppet masters" refers to well funded state/world-class adversaries that use botnets to
-distribute TCP injection attacks. Puppets assist but do not lead attacks,
-in these off-path TCP injection attack scenarios there are offsite command and control centers
-that contain the attack logic. Puppets can also refer to the computers that get compromised by
-the injection attacks because the attackers essentially become the true masters of the compromised computers.
+HoneyBadger is a passive TCP protocol analyzer whose only purpose in life is to detect and
+optionally record TCP injection attacks. HoneyBadger has been called a "Quantum-Insert detector"
+because it can detect the NSA's "Quantum" attacks. However I'll talk about how there are many entities
+around the world besides the NSA that also utilize TCP injection attacks, and there are several different
+kinds of TCP injection attacks that are used... with varying degrees of sophistication needed to perform them.
 
-Widespread adoption of TCP injection attack detection software such as honeyBadger will diminish the effective
-secrecy of these attacks upon the Tor network and other networks as well. Additionally these deployments of
-honeybadger could provide enlightening attack statistics that may prove useful to security researchers,
-contributing to the collection of zero days for the purpose of further study by malware analysts
-and responsible disclosure to software vendors.
+Many of these well funded state/world-classs adversaries are able to completely automate compromising of
+computers using these TCP injection attacks. This is `especially dangerous to journalists`_ when this auto-compromising
+happens based on key-word searches and participation in specific online forums.
+
+.. _`especially dangerous to journalists`: https://cpj.org/2015/04/attacks-on-the-press-surveillance-forces-journalists-to-think-act-like-spies.php
+
+HoneyBadger can help you to "badger" these "puppet masters" who manipulate botnets that assist in TCP injection attacks.
+Widespread adoption of TCP injection attack detection software such as honeyBadger will diminish the effective secrecy of
+these attacks. Additionally these deployments of honeybadger could provide enlightening attack statistics that may prove
+useful to security researchers, contributing to the responsible disclosure of stock-piled zero-days that currently threaten
+our intellectual freedoms.
+
+
+introduction
+------------
+
+"Puppet masters" refers to well funded state/world-class adversaries that use botnets to
+distribute TCP injection attacks. Puppets assist but do not lead attacks, in these off-path TCP injection attack scenarios
+there are offsite command and control centers that contain the attack logic. Puppets can also refer to the
+computers that get compromised by the injection attacks because the attackers essentially become the true masters
+of the compromised computers.
+
+Powerful entities world wide are stock piling zero-days. TCP injection attacks are used to deliver these attacks.
+The more sophisticated adversaries will use botnets to perform the TCP injection from off-path for several reasons;
+namely to enforce a security domain isolation policy that protects their attack logic by keeping it in a protected
+area of their network and to give a higher guarantee of non-attributability. However we'll also discuss these
+"TCP injection appliances" which are sold internationally and are used by the less sophisticated adversaries.
 
 
 how to turn HoneyBadger into a honeyPot
 ---------------------------------------
 
 In the context of TCP injection attacks, a honeypot might include two main sandboxed componenents;
-an application that will use a plain-text TCP protocol and may become compromised when it receives a TCP injection attack,
+an application that will use a plain-text TCP protocol which may become compromised when it receives a TCP injection attack,
 and a TCP injection attack detection system with (optional) full-take logging (i.e. HoneyBadger).
 
 We further speculate that honeyBadger could assist computer security researchers who use various tactics to "attract"
@@ -32,8 +54,17 @@ injection attacks. In that case, HoneyBadger can be used to record the packet pa
 These attack attraction tactics could range from custome automated web crawlers or programs to control tbb/firefox
 to manually utilizing a sandboxed browser to visit "high risk" web sites and use "high risk" search terms. In this case
 we mean high risk to indicate that these may be XKeyscore "Selectors" utilized by the "five-eyes" for automated
-computer network exploitation (CNE). However, any country with Internet access should be able to perform these
+computer network exploitation (CNE). However, any ISP or country with Internet access should be able to perform these
 types of attacks upon traffic traversing their networks.
+
+Tor relay operators may be interested in running HoneyBadger to collect statistics about attacks that are targetting users
+of the Tor network. Only the Tor exit relay operators will be able to detect if a Tor user's TCP traffic has been attacked
+by an injection... therefore it might make sense for there to be an "opt-in" mechanism for Tor users wishing to be alerted
+when their traffic has been attacked.
+
+It is also possible for Tor users to operate their own Tor exit relays AND run honeybadger on them all to record attacks
+upon their own traffic. In this case even if the Tor exit's country's telecommunications laws are very strict it should
+still be legal given that the operator consents to recording her own traffic.
 
 
 sandboxing
