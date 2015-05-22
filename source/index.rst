@@ -3,7 +3,7 @@ HoneyBadger
 ===========
 
 .. image:: images/honey_badger-white-sm-1.png
-|
+| 
 .. image:: https://drone.io/github.com/david415/HoneyBadger/status.png
   :target: https://drone.io/github.com/david415/HoneyBadger/latest
 
@@ -18,11 +18,8 @@ HoneyBadger
 **TCP attack inquisitor and 0-day catcher.**
 
 - HoneyBadger is primarily a comprehensive TCP stream analysis tool for detecting and recording TCP attacks.
-
 - HoneyBadger is modern software written in Golang to deal with TCP's very olde injection vulnerabilities.
-
 - HoneyBadger includes a variety of TCP stream injection attacks written in golang. (2 so far)
-
 - Free as in GPLv3 (except for small sections of Google's BSD licensed code) and the source code is available on github:
 
 * https://github.com/david415/HoneyBadger
@@ -84,7 +81,8 @@ simple Tor exit relay deployment
 
 - Linux users should run honeyBadger as an unprivileged user. First run setcap as root like so::
 
-  setcap cap_net_raw,cap_net_admin=eip honeyBadger
+    setcap cap_net_raw,cap_net_admin=eip honeyBadger
+
 
 - Create RAM backed filesystem for your honeyBadger log directory. if you use Linux then you chose between ramfs and tmpfs. I recommend turning off swap and using tmpfs... this way you can limit the size of the log directory.
 
@@ -92,9 +90,11 @@ simple Tor exit relay deployment
 
   ./honeyBadger -max_concurrent_connections=100 -f="tcp port 443" -l=logs -log_packets=true -metadata_attack_log=false -connection_max_buffer=300 -total_max_buffer=3000 -tcp_idle_timeout=10m0s
 
+
 - Alternatively, this would record only TCP injection attack metadata (includes IP addresses and TCP port numbers but not packet payloads)::
 
   ./honeyBadger -max_concurrent_connections=100 -f="tcp port 443" -l=logs -connection_max_buffer=300 -total_max_buffer=3000 -tcp_idle_timeout=10m0s
+
 
 
 how to sniff only your own traffic on a Tor exit you control
@@ -104,7 +104,7 @@ Soon I'd like to write more here about various ways that you can isolate your ow
 
 Client -> localsocks-proxy -> tor connection -> tor exit -> tor-exit-socks-proxy-server-> internet
 
-However... Firefox/TBB currently does not currently support Socks Proxy username/password authentication... so we should probably use a different tactic to isolate our traffic?
+However... Firefox/TBB currently does not support Socks Proxy username/password authentication... so we should probably use a different tactic to isolate our traffic?
 
 
 
@@ -150,7 +150,7 @@ honeybadger usage::
 
   
 my remarks about each of these options:
-  
+
 - **packet capture options:** Options '-f' and '-i' are used to determine which packets to pay attention to. Currently honeybadger only supports sniffing one network interface. We've got plans to remove the libpcap dependency so in that case the '-f' filter argument would go away. '-w' and '-s' are relevant here, you probably want to use the default options.
   
 - **logging options:** you must specify a logging directory using '-l'. pcap logging is off by default. If you set -log_packets= to true then honeybadger will write one pcap file per connection. Upon connection close honeybadger will delete the pcap logfile unless a TCP attack was detected. **warning**: this will cause lots of filesystem churn when sniffing high traffic interfaces. If you are using Linux then I suggest turning off swap and using a reasonably sized tmpfs for the logs directory. By default honeybadger write metadata-only logs which will NOT contain any packet payload data but will have various sensitive information about attack attempts such as: source and destination IP addresses and TCP ports, the type of TCP injection attack (there are several), time of the attack, TCP Sequence number boundaries of the injection. If you set -metadata_attack_log=false then honeybadger will log the attack packet payload AND the stream overlap.
@@ -171,15 +171,7 @@ TCP attack reports, pcap packet log files and reasembled TCP streams.
 Here's a data flow diagram that gives the basic idea of passively sniffing:
 
 .. image:: images/honeybadger_dfd1.png
-|
-
-
-honeybadger details
--------------------
-
-Read all the gory technical details of how honeyBadger works here:
-
-.. include:: ./how-to-badger-the-puppet-masters.rst
+| 
 
 
 
@@ -273,4 +265,4 @@ https://godoc.org/github.com/david415/HoneyBadger#AttackReport
 |
 
 .. image:: images/honey_badger-white-sm-1.png
-|
+| 
