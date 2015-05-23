@@ -58,6 +58,42 @@ what does HoneyBadger do and **not** do?
 - HoneyBadger is nothing like the more general purpose tools like Snort, Bro or Wireshark.
 
 
+
+installation
+------------
+
+Before building and installing honeybadger I suggest building a modern version of golang from source as described in the instructions here:
+
+https://golang.org/doc/install/source
+
+Like this::
+
+  cd $HOME
+  git clone https://go.googlesource.com/go
+  cd go
+  git checkout go1.4.2
+  cd src
+  ./make.bash
+
+Setup the golang environment variables::
+
+  export GOPATH=$HOME/go/gopath
+  export PATH=$PATH:$HOME/go/bin:$HOME/go/gopath/bin
+
+Then after that you can build honeybadger and it's dependencies like this::
+
+  cd $HOME/go
+  mkdir -p gopath/src/github.com/google
+  cd gopath/src/github.com/google
+  git clone https://github.com/google/gopacket.git
+  mkdir -p $HOME/go/gopath/src/github.com/david415
+  cd $HOME/go/gopath/src/github.com/david415
+  git clone https://github.com/david415/HoneyBadger.git
+  cd HoneyBadger/cmd/honeyBadger
+  go build
+
+
+
 security considerations
 -----------------------
 
