@@ -25,16 +25,6 @@ HoneyBadger
 * https://github.com/david415/HoneyBadger
 
 
-development status
-------------------
-
-Actively being developed.
-
-This early development version of HoneyBadger is useable right now... and I'm sure there are bugs; we are aware of several. I recommend reviewing our current issues before deploying HoneyBadger into a "production environment". Please use the github issue tracker to submit bug reports and feature requests!
-
-https://github.com/david415/HoneyBadger/issues
-
-
 what does HoneyBadger do and **not** do?
 ----------------------------------------
 
