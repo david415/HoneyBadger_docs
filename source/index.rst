@@ -86,14 +86,18 @@ simple Tor exit relay deployment
 
 - Create RAM backed filesystem for your honeyBadger log directory. if you use Linux then you chose between ramfs and tmpfs. I recommend turning off swap and using tmpfs... this way you can limit the size of the log directory.
 
-- Here's an example running honeyBadger for a Tor exit relay with OR-port 443 and full-take logging::
 
-  ./honeyBadger -max_concurrent_connections=100 -f="tcp port 443" -l=logs -log_packets=true -metadata_attack_log=false -connection_max_buffer=300 -total_max_buffer=3000 -tcp_idle_timeout=10m0s
+Here in these two following usage examples I use a berkeley-packet-filter to allow only capturing traffic destined to port 80... where we are far more likely to catch TCP injection attacks in the wild. You could instead scan all traffic on the interface by setting the BPF to "tcp".
+  
+- Here's an example running honeyBadger for a Tor exit relay with full-take logging::
+
+  ./honeyBadger -l="logs" -connection_max_buffer=100 -f="tcp port 80" -i=eth0  -metadata_attack_log=false -tcp_idle_timeout=14m0s -total_max_buffer=1000 -max_concurrent_connections=200 -log_packets=true
 
 
 - Alternatively, this would record only TCP injection attack metadata (includes IP addresses and TCP port numbers but not packet payloads)::
 
-  ./honeyBadger -max_concurrent_connections=100 -f="tcp port 443" -l=logs -connection_max_buffer=300 -total_max_buffer=3000 -tcp_idle_timeout=10m0s
+  ./honeyBadger -l="logs" -connection_max_buffer=100 -f="tcp port 80" -i=eth0 -metadata_attack_log=true -tcp_idle_timeout=14m0s -total_max_buffer=1000 -max_concurrent_connections=200 -log_packets=false
+
 
 
 
