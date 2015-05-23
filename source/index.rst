@@ -235,7 +235,7 @@ procedure
 
   .. code-block:: bash
 
-  ./honeyBadger -i=lo -f="tcp port 9666"  -l="."
+  ./honeyBadger -i=lo -f="tcp port 9666" -l="." -total_max_buffer=300 -connection_max_buffer=100
 
 3. run ``sprayInjector`` with these arguments
 
