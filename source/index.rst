@@ -237,35 +237,39 @@ procedure
 
 2. run ``honeyBadger`` with these arguments... Note we are telling honeyBadger to write log files to the current working directory.
 
-  .. code-block:: bash
+.. code-block:: bash
 
-  ./honeyBadger -i=lo -f="tcp port 9666" -l="." -total_max_buffer=300 -connection_max_buffer=100
+   ./honeyBadger -i=lo -f="tcp port 9666" -l="." -total_max_buffer=300 -connection_max_buffer=100
+
 
 3. run ``sprayInjector`` with these arguments
 
-  .. code-block:: bash
+.. code-block:: bash
 
-  ./sprayInjector -d=127.0.0.1 -e=9666 -f="tcp" -i=lo
+   ./sprayInjector -d=127.0.0.1 -e=9666 -f="tcp" -i=lo
+
 
 4. start the netcat server
 
-  .. code-block:: bash
+.. code-block:: bash
 
-  nc -l -p 9666
+   nc -l -p 9666
+
 
 5. start the netcat client
 
-  .. code-block:: bash
+.. code-block:: bash
 
-  nc 127.0.0.1 9666
+   nc 127.0.0.1 9666
+
 
 6. In this next step we enter some data on the netcat server so that it will send it to the netcat client that is connected until the sprayInjector prints a log message containing "packet spray sent!" In that cause the TCP connection will have been sloppily injected. The injected data should be visible in the netcat client's output.
 
 7. Look for the log files in honeyBadger's working directory. You should see two files beginning with "127.0.0.1"; the pcap file is a full packet log of that TCP connection which you can easily view in Wireshark et al. The JSON file contains attack reports. This is various peices of information relevant to each TCP injection attack. The ``sprayInjector`` tends to produce several injections... and does so sloppily in regards to keeping the client and server synchronized.
 
-  .. code-block:: none
+.. code-block:: none
 
-  $ ls 127*
+   $ ls 127*
   127.0.0.1:43716-127.0.0.1:9666.pcap  127.0.0.1:9666-127.0.0.1:43716.attackreport.json
 
 
