@@ -52,9 +52,11 @@ what does HoneyBadger do and **not** do?
 installation
 ------------
 
+
 Before building and installing honeybadger I suggest building a modern version of golang from source as described in the instructions here:
 
 https://golang.org/doc/install/source
+
 
 Like this::
 
@@ -65,10 +67,12 @@ Like this::
   cd src
   ./make.bash
 
+
 Setup the golang environment variables::
 
   export GOPATH=$HOME/go/gopath
   export PATH=$PATH:$HOME/go/bin:$HOME/go/gopath/bin
+
 
 Then after that you can build honeybadger and it's dependencies like this::
 
@@ -81,6 +85,13 @@ Then after that you can build honeybadger and it's dependencies like this::
   git clone https://github.com/david415/HoneyBadger.git
   cd HoneyBadger/cmd/honeyBadger
   go build
+
+
+Disable the various segmentation offloading options on the network device(s) you will be sniffing::
+
+  ethtool -K eth0 gso off
+  ethtool -K eth0 tso off
+  ethtool -K eth0 gro off
 
 
 
