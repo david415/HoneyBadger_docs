@@ -6,64 +6,31 @@ how to badger the puppet masters
 abstract
 --------
 
-HoneyBadger is a passive TCP protocol analyzer whose only purpose in life is to detect and optionally record TCP injection attacks. HoneyBadger has been called a "Quantum-Insert detector" because it can detect the NSA's "Quantum" attacks. However I'll talk about how there are many entities around the world besides the NSA that also utilize TCP injection attacks, and there are several kinds of attacks that are used... with varying degrees of sophistication needed to perform them.
+HoneyBadger is a passive TCP protocol analyzer whose only purpose in life is to detect and optionally record TCP injection attacks. HoneyBadger has been called a "Quantum-Insert detector" because it can detect the NSA's "Quantum" attacks. However other researchers have already commented on various other entities who utilize these attacks [?] [?], and there are several kinds of attacks that are used with varying degrees of sophistication needed to perform them.
 
 Many of these well-funded state/world-class adversaries are able to completely automate the compromising of computers using these TCP injection attacks. This is especially dangerous to journalists and activists when this auto-compromising happens based on key-word searches and participation in specific online forums.
 
-HoneyBadger can help you to "badger" the "puppet masters" who manipulate botnets that assist in TCP injection attacks. Widespread adoption of TCP injection attack detection software such as HoneyBadger will diminish the effective secrecy of these attacks. Additionally, these deployments of HoneyBadger could provide enlightening attack statistics that may prove useful to security researchers, contributing to the responsible disclosure of stock-piled zero-days that currently threaten our intellectual freedoms.
+Widespread adoption of TCP injection attack detection software such as HoneyBadger will diminish the effective secrecy of these attacks. Additionally, these deployments of HoneyBadger could provide enlightening attack statistics that may prove useful to security researchers, contributing to the responsible disclosure of stock-piled zero-days that currently threaten our intellectual freedoms.
 
 
 
 introduction
 ------------
 
-"Puppet masters" refers to well-funded state/world-class adversaries that use botnets to distribute TCP injection attacks. Puppets assist but do not lead attacks, in these off-path TCP injection attack scenarios there are offsite command and control centers that contain the attack logic. Puppets can also refer to the computers that get compromised by the injection attacks because the attackers essentially become the true masters of the compromised computers.
-
-Powerful entities world wide are stock piling zero-days. TCP injection attacks are used to deliver these attacks. The more sophisticated adversaries will use botnets to perform the TCP injection from off-path for several reasons; namely to enforce a security domain isolation policy that protects their attack logic by keeping it in a protected area of their network and to give a higher guarantee of non-attributability. However we'll also discuss these "TCP injection appliances" which are sold internationally and are used by the less sophisticated adversaries.
-
-
-
-how to turn HoneyBadger into a honeyPot
----------------------------------------
-
-In the context of TCP injection attacks, a honeypot might include two main sandboxed componenents; an application that will use a plaintext TCP protocol which may become compromised when it receives a TCP injection attack, and a TCP injection attack detection system with (optional) full-take logging (i.e. HoneyBadger).
-
-We further speculate that HoneyBadger could assist computer security researchers who use various tactics to "attract" injection attacks. In that case, HoneyBadger can be used to record the packet payloads and metadata about the attacks. These attack attraction tactics could range from custom automated web crawlers or programs to control tbb/firefox to manually utilizing a sandboxed browser to visit "high risk" web sites and use "high risk" search terms. In this case we mean high risk to indicate that these may be XKeyscore "Selectors" utilized by the "five-eyes" for automated computer network exploitation (CNE). However, any ISP or country with Internet access should be able to perform these types of attacks upon traffic traversing their networks.
-
-Tor relay operators may be interested in running HoneyBadger to collect statistics about attacks that are targetting users of the Tor network. Only the Tor exit relay operators will be able to detect if a Tor user's TCP traffic has been attacked by an injection... therefore it might make sense for there to be an "opt-in" mechanism for Tor users wishing to be alerted when their traffic has been attacked.
-
-It is also possible for Tor users to operate their own Tor exit relays AND run honeybadger on them all to record attacks upon their own traffic. In this case even if the Tor exit's country's telecommunications laws are very strict it should still be legal given that the operator consents to recording her own traffic.
-
-
-
-sandboxing
-----------
-
-When conducting these experiments the application should be thoroughly sandboxed because it will most likely become compromised. Clearly Qubes OS is the most secure and convenient choice for software sandboxing on workstations with insecure applications such as web browsers.
-
-https://www.qubes-os.org/
-
-Perhaps some researchers will operate with the threat model assumption that for this type of scenario it is better to not even run the compromised application on any of your own person computer equipment  at all. If your goal is to expose the attacks upon Tor users then you have the option to instead run the Tor Browser Bundle on a  cheap remote VPS (virtual private server). You can use ssh + vnc to interact with the browser remotely. I am a fan of this pure python VNC client that a friend pointed me to:
-
-https://code.google.com/p/python-vnc-viewer
-
-You can also run the Tor Browser Bundle and other browsers on a Raspberry Pi 2 running archlinux arm. This hardware might be cheaper to replace and easier to isolate. I've successfully built the Tor Browser Bundle for the Raspberry Pi 2 running ARM Archlinux, details here:
-
-https://trac.torproject.org/projects/tor/ticket/12631#comment:6
+Powerful entities world wide are stock piling zero-days. TCP injection attacks are used to deliver these attacks. The more sophisticated adversaries will use a security domain isolation policy to make sure their attack logic is located in a protected area of their network while they utilize multiple network taps and injection hosts in multiple locations. It is clear from the Snowden documents that at least in the past the NSA has utilized botnets (large groups of compromise computers connected to the Internet) hosts as "Quantum Shooters", hosts that send the injection attack packets to the target upon receiving "injection tips" (recent TCP Sequence numbers read from a network tap).
 
 
 
 TCP injection attacks
 ---------------------
 
-TCP injection attacks are man-on-the-side attacks (MOS) [1]_ and are not the same thing as man-in-the-middle attacks (MITM). In the MOS scenario the attacker cannot prevent the propagation of packets between link A -> B or B -> A but instead can read and write packets on the same network interface(s)... in other more eloquent words from Wikipedia: "Instead of completely controlling a network node as in a man-in-the-middle attack, the attacker only has regular access to the communication channel, which allows him to read the traffic and insert new messages, but not to modify or delete messages sent by other participants." [1]_ Much of the classic literature about TCP injection attacks considers TCP injection in the context of probabilistic TCP Sequence number prediction. [2]_ [3]_  These olde school attacks focused more on exploiting TCP Sequence  number prediction and side channels, however TCP injection attacks are essentially a form of timing  attack. Since the various improvements to the TCP's initial Initial Sequence Numbers (ISNs) [4]_ [5]_, TCP was widely believed to not be vulnerable to injection attacks, however TCP has remained vulnerable to various Sequence prediction based injection attacks, including side channel inference attacks [6]_ [7]_ [8]_. Various so called classic and modern TCP injection attacks can involve  an "off-path injection". These are remarkable deployment tactics where the attack packets originate from distributed "puppet" computers that  are not directly in either route between host Alice and host Bob. Ingress filtering may make this IP spoofing between networks less  commonly available than before but still feasible today [6]_.
+TCP injection attacks are man-on-the-side attacks (MOTS) [1]_ and are not the same thing as man-in-the-middle attacks (MITM). The definition of MOTS is when the attack controls one or more communications channels in the route. That is, the ability to read or write packets; in other more eloquent words from Wikipedia: "Instead of completely controlling a network node as in a man-in-the-middle attack, the attacker only has regular access to the communication channel, which allows him to read the traffic and insert new messages, but not to modify or delete messages sent by other participants." [1]_ Much of the classic literature about TCP injection attacks considers TCP injection in the context of probabilistic TCP Sequence number prediction. [2]_ [3]_  These olde school attacks focused more on exploiting TCP Sequence number prediction and side channels, however TCP injection attacks are essentially a form of timing  attack. Since the various improvements to the TCP's initial Initial Sequence Numbers (ISNs) [4]_ [5]_, TCP was widely believed to not be vulnerable to injection attacks, however TCP has remained vulnerable to various Sequence prediction based injection attacks, including side channel inference attacks [6]_ [7]_ [8]_. Various so called classic and modern TCP injection attacks can involve  an "off-path injection". These are remarkable deployment tactics where the attack packets originate from hosts that are not directly in either route between host Alice and host Bob. Ingress filtering may make this IP spoofing between networks less  commonly available than before but still feasible today [6]_.
 
-These puppets behave as "write-only network taps" in so far as they have the ability to inject packets but not read. It is my understanding that the secret NSA documents refer to these puppet computers as  "QUANTUM shooters" [9]_.  According to a Der Spiegal article about leaked NSA documents, these puppets create a layer of indirection that might be  used to make TCP injection attacks harder to track down: "And computers infected with Straitbizarre can be turned into disposable  and non-attributable 'shooter' nodes." [10]_ We've also seen other code names for the shooters such as Straightbizarre and Daredevil. [11]_  According to a Guardian article the NSA may be using a topologically advantageous placement of servers in the  network to win the packet race: "the NSA places secret servers, codenamed Quantum, at key places on the internet backbone. This  placement ensures that they can react faster than other websites can." [12]_ [13]_ One Wired article mentions that the NSA could be using MoS attacks  rather than MITM attacks because it fit's their security domain isolation policy with regards to where attack logic is placed. [14]_ Any world class attacker such as the NSA would likely have measures to prevent leaking their 0-day to security researchers and adversaries. [15]_
-According to various security researchers and leaked documents, there  is the so called lawful intercept industry where governments and other organizations with known track records of human right violations can illegally purchase "hacking appliances". [16]_ [17]_ [18]_ These MoS appliances might offer an advantage over MITM attacks in that  they may be very simple to deploy. Perhaps by plugging into a mirrored switch port. [20]_
+These injection hosts behave as "write-only network taps" in so far as they have the ability to inject packets but not read. It is my understanding that the secret NSA documents refer to these injection hosts as "QUANTUM shooters" [9]_.  According to a Der Spiegal article about leaked NSA documents, these shooters create a layer of indirection that might be  used to make TCP injection attacks harder to track down: "And computers infected with Straitbizarre can be turned into disposable  and non-attributable 'shooter' nodes." [10]_ We've also seen other code names for the shooters such as Straightbizarre and Daredevil. [11]_  According to a Guardian article the NSA may be using a topologically advantageous placement of servers in the network to win the packet race: "the NSA places secret servers, codenamed Quantum, at key places on the internet backbone. This  placement ensures that they can react faster than other websites can." [12]_ [13]_ One Wired article mentions that the NSA could be using MOTS attacks  rather than MITM attacks because it fit's their security domain isolation policy with regards to where attack logic is placed. [14]_ Any world class attacker such as the NSA would likely have measures to prevent leaking their 0-day to security researchers and adversaries. [15]_
 
-Details are not perfectly clear regarding how the packet race is actually won either for the NSA Quantum deployments nor for the specialized MoS "hacking appliances", however there are plausible  theories for both cases. It could be that these MoS appliances posses a high success rate due to being built with specialized high  speed signal processing components that are capable of operating at line speeds. [16]_ [17]_ [18]_ The world-class state adversaries utilizing the backbone-sniffing->C&C->puppet shooter pipeline approach may utilize their own network infrastructure to ensure their winning the packet latency race against the legitimate actors.
+According to various security researchers and leaked documents, there  is the so called lawful intercept industry where governments and other organizations with known track records of human right violations can illegally purchase "hacking appliances". [16]_ [17]_ [18]_ These MOTS appliances might offer an advantage over MITM attacks in that  they may be very simple to deploy. Perhaps by plugging into a mirrored switch port. [20]_
 
-There exist multiple entities world wide that posses the capability  to perform these TCP injection attacks with a very high probability of success, however they may not all have the same operational security  policies. For instance perhaps the NSA has a policy of not deploying attack logic to insecure systems or physical facilities. I  speculate that they have a security domain isolation policy that causes them to prefer an offsite MoS approach over an onsite MoS or  MITM. The attacker might have an offsite command and control (C&C) center which passes instructions to these "shooter"  puppets, who then perform the actual TCP injection attack on behalf of  the C&C.
+There exist multiple entities world wide that posses the capability to perform these TCP injection attacks with a very high probability of success, however they may not all have the same operational security policies. For instance perhaps the NSA has a policy of not deploying attack logic to insecure systems or physical facilities. I speculate that they have a security domain isolation policy that causes them to prefer an offsite MOTS approach over an onsite MOTS or MITM. The attacker might have an offsite command and control (C&C) center which passes instructions to these "shooters", who then perform the actual TCP injection attack on behalf of the C&C.
 
 
 
@@ -103,16 +70,34 @@ In principal HoneyBadger of course cannot determine which packet was sent by an 
 
 
 
-future work
------------
+how to turn HoneyBadger into a honeyPot
+---------------------------------------
 
-*coming soon*
+In the context of TCP injection attacks, a honeypot might include two main sandboxed componenents; an application that will use a plaintext TCP protocol which may become compromised when it receives a TCP injection attack, and a TCP injection attack detection system with (optional) full-take logging (i.e. HoneyBadger).
+
+We further speculate that HoneyBadger could assist computer security researchers who use various tactics to "attract" injection attacks. In that case, HoneyBadger can be used to record the packet payloads and metadata about the attacks. These attack attraction tactics could range from custom automated web crawlers or programs to control tbb/firefox to manually utilizing a sandboxed browser to visit "high risk" web sites and use "high risk" search terms. In this case we mean high risk to indicate that these may be XKeyscore "Selectors" utilized by the "five-eyes" for automated computer network exploitation (CNE). However, any ISP or country with Internet access should be able to perform these types of attacks upon traffic traversing their networks.
+
+Tor relay operators may be interested in running HoneyBadger to collect statistics about attacks that are targetting users of the Tor network. Only the Tor exit relay operators will be able to detect if a Tor user's TCP traffic has been attacked by an injection... therefore it might make sense for there to be an "opt-in" mechanism for Tor users wishing to be alerted when their traffic has been attacked.
+
+It is also possible for Tor users to operate their own Tor exit relays AND run honeybadger on them all to record attacks upon their own traffic. In this case even if the Tor exit's country's telecommunications laws are very strict it should still be legal given that the operator consents to recording her own traffic.
 
 
-conclusion
+
+sandboxing
 ----------
 
-*coming soon*
+When conducting these experiments the application should be thoroughly sandboxed because it will most likely become compromised. Clearly Qubes OS is the most secure and convenient choice for software sandboxing on workstations with insecure applications such as web browsers.
+
+https://www.qubes-os.org/
+
+Perhaps some researchers will operate with the threat model assumption that for this type of scenario it is better to not even run the compromised application on any of your own person computer equipment  at all. If your goal is to expose the attacks upon Tor users then you have the option to instead run the Tor Browser Bundle on a  cheap remote VPS (virtual private server). You can use ssh + vnc to interact with the browser remotely. I am a fan of this pure python VNC client that a friend pointed me to:
+
+https://code.google.com/p/python-vnc-viewer
+
+You can also run the Tor Browser Bundle and other browsers on a Raspberry Pi 2 running archlinux arm. This hardware might be cheaper to replace and easier to isolate. I've successfully built the Tor Browser Bundle for the Raspberry Pi 2 running ARM Archlinux, details here:
+
+https://trac.torproject.org/projects/tor/ticket/12631#comment:6
+
 
 
 
