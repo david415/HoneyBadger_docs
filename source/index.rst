@@ -166,14 +166,57 @@ honeyBadger has a rather large commandline usage... but it's not very difficult:
   continuing to stream connection data.  If zero or less, this is infinite
   -w="3s": timeout for reading packets off the wire
 
-  
-my remarks about each of these options:
 
-- **packet capture options:** Options '-f' and '-i' are used to determine which packets to pay attention to. Currently honeybadger only supports sniffing one network interface. We've got plans to remove the libpcap dependency so in that case the '-f' filter argument would go away. '-w' and '-s' are relevant here, you probably want to use the default options.
-  
-- **logging options:** you must specify a logging directory using '-l'. pcap logging is off by default. If you set -log_packets= to true then honeybadger will write one pcap file per connection. Upon connection close honeybadger will delete the pcap logfile unless a TCP attack was detected. **warning**: this will cause lots of filesystem churn when sniffing high traffic interfaces. If you are using Linux then I suggest turning off swap and using a reasonably sized tmpfs for the logs directory. By default honeybadger write metadata-only logs which will NOT contain any packet payload data but will have various sensitive information about attack attempts such as: source and destination IP addresses and TCP ports, the type of TCP injection attack (there are several), time of the attack, TCP Sequence number boundaries of the injection. If you set -metadata_attack_log=false then honeybadger will log the attack packet payload AND the stream overlap.
+packet acquisition
+``````````````````
 
-- **resource boundary options:** '-connection_max_buffer' and '-total_max_buffer' are used to limit the amount of page-cache pages that honeybadger can use for storing and reordering out-of-order-packets (much like TCP's mbuf datastructure). '-tcp_idle_timeout' is important as a stop-gap measure to prevent us from tracking connections that may have been closed without our knowing. '-max_ring_packets' is very important to set appropriately; it determines the size of the TCP reassembly ring buffer. This ring buffer is utilized for the retrospective analysis that allows us to determine if a given packet overlaps with previously reassembled stream segments. I estimate that this ring buffer should be set to a size that is roughly equivalent to the TCP window size of the connection... but maybe someone can help us pick a better heuristic? I usually set it to 40 and it works OK.
+There are three ethernet sniffers (also known as packet Data AcQuisition sources) that honeybadger currently uses:
+
+- AF_PACKET (Linux only)
+- BPF (BSD only)
+- libpcap
+
+Currently only our libpcap sniffer supports filtering... that is the `-f` flag only affects honeyBadger if you are using the lipcap ethernet sniffer... which is the default unless `-afpacket` or `-bpf` are set to `true`.
+
+In any case you must definitely specify a network interface to sniff with `-i`. `-w` and `-s` for far only are relevant to the libpcap sniffer and you probably want to use their default values.
+
+
+logging
+```````
+
+You must specify a logging directory using `-l`.
+pcap-packet logging is turned off by default. If you set `-log_packets` to `true` then honeybadger
+will write one pcap file per connection. Upon connection close honeybadger will delete the pcap logfile
+unless a TCP attack was detected.
+
+**duly note**: this will cause lots of filesystem churn when sniffing high traffic interfaces.
+Clever honeyBadger-Operators will use a RAM-based filesystem for their logs.
+
+
+By default honeybadger write metadata-only logs which will NOT contain any packet payload data but will
+have various sensitive information about attack attempts such as:
+- source and destination IP addresses
+- TCP ports
+- the type of TCP injection attack (there are several)
+- time of the attack
+- TCP Sequence number boundaries of the injection
+
+If you set `-metadata_attack_log` to `false` then honeybadger will log the attack packet payload AND the stream overlap.
+This feature is expected to help honeyBadger-Operators to eliminate false positives. Our reporting tool can read the
+json attack report file and print out and ASCII + hex color-coated diff of the injected data versus reassembled TCP stream overlap.
+
+
+resource boundaries
+```````````````````
+
+`-connection_max_buffer` and `-total_max_buffer` are used to limit the amount of page-cache pages
+that honeybadger can use for storing and reordering out-of-order-packets (much like TCP's mbuf datastructure).
+
+`-tcp_idle_timeout` is important... each connection continues to be tracked even after a close so that we might detect certain types of atacks.
+
+`-max_ring_packets` is very important to set appropriately; it determines the size of the TCP reassembly ring buffer. This ring buffer is utilized for the retrospective analysis that allows us to determine if a given packet overlaps with previously reassembled stream segments. I estimate that this ring buffer should be set to a size that is roughly equivalent to the TCP window size of the connection... but maybe someone can help us pick a better heuristic? I usually set it to 40 and it works OK.
+
+`-max_pcap_log_size` and `-max_pcap_rotations` are used to adjust a simple log rotation scheme used limit the amount of disk utilized by pcap-packet logs.
 
 
 
