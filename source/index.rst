@@ -87,20 +87,20 @@ Then after that you can build honeybadger and it's dependencies like this::
   go build
 
 
-Disable the various segmentation offloading options on the network device(s) you will be sniffing::
+preparing to run HoneyBadger
+----------------------------
+
+If you run Linux and would like to use the AF_PACKET sniffer then you should
+also disable the segment offloading options on the relavent network device(s) ::
 
   ethtool -K eth0 gso off
   ethtool -K eth0 tso off
   ethtool -K eth0 gro off
 
 
+Linux users should run honeyBadger as an unprivileged user. First run setcap as root like so::
 
-security considerations
------------------------
-
-- HoneyBadger is written in golang which should be much safer than C. However, we do currently depend on libpcap and we'd like to get rid of this dependency specifically to eliminate any security vulnerabilities that using libpcap might have. See github issue https://github.com/david415/HoneyBadger/issues/43
-
-- HoneyBadger is designed to be somewhat denial-of-service resistant. We specifically allow the user to set resource boundary options for HoneyBadger so that continuous operation is possible.
+  setcap cap_net_raw,cap_net_admin=eip honeyBadger
 
 
 Tor exit relay operator legal considerations
@@ -111,31 +111,6 @@ Tor exit relay operator legal considerations
 - As far as my humble legal-system understanding is concerned it should be legal to operate an opt-in HoneyBadger service for users who consent to having their traffic recorded.
 
 - It is the author's firm belief that it is definitely legal to monitor your own traffic using HoneyBadger with the full-take logging features.
-
-
-simple Tor exit relay deployment
---------------------------------
-
-- Linux users should run honeyBadger as an unprivileged user. First run setcap as root like so::
-
-    setcap cap_net_raw,cap_net_admin=eip honeyBadger
-
-
-- Create RAM backed filesystem for your honeyBadger log directory. if you use Linux then you chose between ramfs and tmpfs. I recommend turning off swap and using tmpfs... this way you can limit the size of the log directory.
-
-
-Here in these two following usage examples I use a berkeley-packet-filter to allow only capturing traffic destined to port 80... where we are far more likely to catch TCP injection attacks in the wild. You could instead scan all traffic on the interface by setting the BPF to "tcp".
-  
-- Here's an example running honeyBadger for a Tor exit relay with full-take logging::
-
-  ./honeyBadger -l="logs" -connection_max_buffer=100 -f="tcp port 80" -i=eth0  -metadata_attack_log=false -tcp_idle_timeout=14m0s -total_max_buffer=1000 -max_concurrent_connections=200 -log_packets=true
-
-
-- Alternatively, this would record only TCP injection attack metadata (includes IP addresses and TCP port numbers but not packet payloads)::
-
-  ./honeyBadger -l="logs" -connection_max_buffer=100 -f="tcp port 80" -i=eth0 -metadata_attack_log=true -tcp_idle_timeout=14m0s -total_max_buffer=1000 -max_concurrent_connections=200 -log_packets=false
-
-
 
 
 how to sniff only your own traffic on a Tor exit you control
@@ -151,15 +126,16 @@ However... Firefox/TBB currently does not support Socks Proxy username/password 
 what to do with HoneyBadger collected data
 ------------------------------------------
 
-If your honeybadger generates an attack report and you have specified the CLI option `-metadata_attack_log=false` then you may be interested the `honeybadgerReportTool`; it displays a dump output which includes ASCII and hex... this color coated hex diff makes it **very** obvious what data was injected. This simple utility is located in the honeybadger code repo here: https://github.com/david415/HoneyBadger/blob/master/cmd/honeybadgerReportTool/main.go
+We expect HoneyBadger to have various false positive bugs... and furthermore there are in fact various ways in which network anomalies can appear to be injection attacks or accidentally inject data. I have seen in the wild misbehaving load balancers etc.
+
+If your honeybadger generates an attack report and you have specified the CLI option `-metadata_attack_log=false` then you may be interested in the `honeybadgerReportTool`; it displays a dump output which includes ASCII and hex... this color coated hex diff makes it **very** obvious what data was injected. This simple utility is located in the honeybadger code repo here: https://github.com/david415/HoneyBadger/blob/master/cmd/honeybadgerReportTool/main.go
 
 
 honeyBadger commandline arguments and usage
 -------------------------------------------
 
-I will explain each commandline options and show usage examples below.
 
-honeybadger usage::
+honeyBadger has a rather large commandline usage... but it's not very difficult::
 
  $ ./honeyBadger --help
  Usage of ./honeyBadger:
@@ -194,9 +170,6 @@ my remarks about each of these options:
 - **resource boundary options:** '-connection_max_buffer' and '-total_max_buffer' are used to limit the amount of page-cache pages that honeybadger can use for storing and reordering out-of-order-packets (much like TCP's mbuf datastructure). '-tcp_idle_timeout' is important as a stop-gap measure to prevent us from tracking connections that may have been closed without our knowing. '-max_ring_packets' is very important to set appropriately; it determines the size of the TCP reassembly ring buffer. This ring buffer is utilized for the retrospective analysis that allows us to determine if a given packet overlaps with previously reassembled stream segments. I estimate that this ring buffer should be set to a size that is roughly equivalent to the TCP window size of the connection... but maybe someone can help us pick a better heuristic? I usually set it to 40 and it works OK.
 
 
-how does HoneyBadger work?
-==========================
-
 
 data flow
 ---------
@@ -214,6 +187,8 @@ Here's a data flow diagram that gives the basic idea of passively sniffing:
 autogenerated API documentation
 -------------------------------
 https://godoc.org/github.com/david415/HoneyBadger
+
+
 
 manual "integration test" with netcat
 =====================================
