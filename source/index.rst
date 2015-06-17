@@ -137,27 +137,33 @@ honeyBadger commandline arguments and usage
 
 honeyBadger has a rather large commandline usage... but it's not very difficult::
 
- $ ./honeyBadger --help
- Usage of ./honeyBadger:
+  $ ./honeyBadger -h
+  Usage of ./honeyBadger:
+  -afpacket=false: Use AF_PACKET for faster, harder sniffing of packets.
+  -archive_dir="": archive directory for storing attack logs and related pcap files
+  -bpf=false: Use *BSD-only BPF for sniffing packets on non-Linux systems.
   -connection_max_buffer=0: 
- Max packets to buffer for a single connection before skipping over a gap in data
- and continuing to stream the connection after the buffer.  If zero or less, this
- is infinite.
+  Max packets to buffer for a single connection before skipping over a gap in data
+  and continuing to stream the connection after the buffer.  If zero or less, this
+  is infinite.
   -detect_coalesce_injection=true: Detect coalesce injection attacks
   -detect_hijack=true: Detect handshake hijack attacks
   -detect_injection=true: Detect injection attacks
   -f="tcp": BPF filter for pcap
   -i="eth0": Interface to get packets from
-  -l="honeyBadger-logs": log directory
+  -l="": incoming log dir used initially for pcap files if packet logging is enabled
   -log_packets=false: if set to true then log all packets for each tracked TCP connection
   -max_concurrent_connections=0: Maximum number of concurrent connection to track.
+  -max_pcap_log_size=1: maximum pcap size per rotation in megabytes
+  -max_pcap_rotations=10: maximum number of pcap rotations per connection
   -max_ring_packets=40: Max packets per connection stream ring buffer
   -metadata_attack_log=true: if set to true then attack reports will only include metadata
+  -pcapfile="": pcap filename to read packets from rather than a wire interface.
   -s=65536: SnapLen for pcap packet capture
   -tcp_idle_timeout=5m0s: tcp idle timeout duration
   -total_max_buffer=0: 
- Max packets to buffer total before skipping over gaps in connections and
- continuing to stream connection data.  If zero or less, this is infinite
+  Max packets to buffer total before skipping over gaps in connections and
+  continuing to stream connection data.  If zero or less, this is infinite
   -w="3s": timeout for reading packets off the wire
 
   
