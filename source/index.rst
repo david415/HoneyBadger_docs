@@ -195,6 +195,7 @@ Clever honeyBadger-Operators will use a RAM-based filesystem for their logs.
 
 By default honeybadger write metadata-only logs which will NOT contain any packet payload data but will
 have various sensitive information about attack attempts such as:
+
 - source and destination IP addresses
 - TCP ports
 - the type of TCP injection attack (there are several)
