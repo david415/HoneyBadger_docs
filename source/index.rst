@@ -176,16 +176,16 @@ There are three ethernet sniffers (also known as packet Data AcQuisition sources
 - BPF (BSD only)
 - libpcap
 
-Currently only our libpcap sniffer supports filtering... that is the `-f` flag only affects honeyBadger if you are using the lipcap ethernet sniffer... which is the default unless `-afpacket` or `-bpf` are set to `true`.
+Currently only our libpcap sniffer supports filtering... that is the ``-f`` flag only affects honeyBadger if you are using the lipcap ethernet sniffer... which is the default unless ``-afpacket`` or ``-bpf`` are set to ``true``.
 
-In any case you must definitely specify a network interface to sniff with `-i`. `-w` and `-s` for far only are relevant to the libpcap sniffer and you probably want to use their default values.
+In any case you must definitely specify a network interface to sniff with ``-i``. ``-w`` and ``-s`` for far only are relevant to the libpcap sniffer and you probably want to use their default values.
 
 
 logging
 ```````
 
-You must specify a logging directory using `-l`.
-pcap-packet logging is turned off by default. If you set `-log_packets` to `true` then honeybadger
+You must specify a logging directory using ``-l``.
+pcap-packet logging is turned off by default. If you set ``-log_packets`` to ``true`` then honeybadger
 will write one pcap file per connection. Upon connection close honeybadger will delete the pcap logfile
 unless a TCP attack was detected.
 
@@ -201,7 +201,7 @@ have various sensitive information about attack attempts such as:
 - time of the attack
 - TCP Sequence number boundaries of the injection
 
-If you set `-metadata_attack_log` to `false` then honeybadger will log the attack packet payload AND the stream overlap.
+If you set ``-metadata_attack_log`` to ``false`` then honeybadger will log the attack packet payload AND the stream overlap.
 This feature is expected to help honeyBadger-Operators to eliminate false positives. Our reporting tool can read the
 json attack report file and print out and ASCII + hex color-coated diff of the injected data versus reassembled TCP stream overlap.
 
@@ -209,14 +209,14 @@ json attack report file and print out and ASCII + hex color-coated diff of the i
 resource boundaries
 ```````````````````
 
-`-connection_max_buffer` and `-total_max_buffer` are used to limit the amount of page-cache pages
+``-connection_max_buffer`` and ``-total_max_buffer`` are used to limit the amount of page-cache pages
 that honeybadger can use for storing and reordering out-of-order-packets (much like TCP's mbuf datastructure).
 
-`-tcp_idle_timeout` is important... each connection continues to be tracked even after a close so that we might detect certain types of atacks.
+``-tcp_idle_timeout`` is important... each connection continues to be tracked even after a close so that we might detect certain types of atacks.
 
-`-max_ring_packets` is very important to set appropriately; it determines the size of the TCP reassembly ring buffer. This ring buffer is utilized for the retrospective analysis that allows us to determine if a given packet overlaps with previously reassembled stream segments. I estimate that this ring buffer should be set to a size that is roughly equivalent to the TCP window size of the connection... but maybe someone can help us pick a better heuristic? I usually set it to 40 and it works OK.
+``-max_ring_packets`` is very important to set appropriately; it determines the size of the TCP reassembly ring buffer. This ring buffer is utilized for the retrospective analysis that allows us to determine if a given packet overlaps with previously reassembled stream segments. I estimate that this ring buffer should be set to a size that is roughly equivalent to the TCP window size of the connection... but maybe someone can help us pick a better heuristic? I usually set it to 40 and it works OK.
 
-`-max_pcap_log_size` and `-max_pcap_rotations` are used to adjust a simple log rotation scheme used limit the amount of disk utilized by pcap-packet logs.
+``-max_pcap_log_size`` and ``-max_pcap_rotations`` are used to adjust a simple log rotation scheme used limit the amount of disk utilized by pcap-packet logs.
 
 
 
