@@ -1,7 +1,7 @@
 
 
-how to badger the puppet masters
-================================
+how to detect TCP Injection attacks
+===================================
 
 abstract
 --------
@@ -17,7 +17,7 @@ Widespread adoption of TCP injection attack detection software such as HoneyBadg
 introduction
 ------------
 
-Powerful entities world wide are stock piling zero-days. TCP injection attacks are used to deliver these attacks. The more sophisticated adversaries will use a security domain isolation policy to make sure their attack logic is located in a protected area of their network while they utilize multiple network taps and injection hosts in multiple locations. It is clear from the Snowden documents that at least in the past the NSA has utilized botnets (large groups of compromise computers connected to the Internet) hosts as "Quantum Shooters", hosts that send the injection attack packets to the target upon receiving "injection tips" (recent TCP Sequence numbers read from a network tap).
+Powerful entities world wide are stock piling zero-days. TCP injection attacks are used to deliver these attacks. The more sophisticated adversaries will use a security domain isolation policy to make sure their attack logic is located in a protected area of their network while they utilize multiple network taps and injection hosts in multiple locations. It is clear from the Snowden documents that at least in the past the NSA has utilized botnet (large groups of compromise computers connected to the Internet) hosts as "Quantum Shooters", hosts that send the injection attack packets to the target upon receiving "injection tips" (recent TCP Sequence numbers read from a network tap).
 
 
 
@@ -70,34 +70,18 @@ In principal HoneyBadger of course cannot determine which packet was sent by an 
 
 
 
-how to turn HoneyBadger into a honeyPot
----------------------------------------
+future work and projects
+------------------------
+
+We hope that other software developers will create additional tools to detect TCP injection attacks. So far the only other group that has done so publicly is FOX-IT with their patch to Snort. [21]_ If language security is a concern then Rust is an obvious choice however there does not yet exist a low level networking library for Rust with a TCP decoding layer... however libpnet shows lots of promise [22]_ and work is in progress to add a TCP encoding/decoding layer. [23]_
 
 In the context of TCP injection attacks, a honeypot might include two main sandboxed componenents; an application that will use a plaintext TCP protocol which may become compromised when it receives a TCP injection attack, and a TCP injection attack detection system with (optional) full-take logging (i.e. HoneyBadger).
 
-We further speculate that HoneyBadger could assist computer security researchers who use various tactics to "attract" injection attacks. In that case, HoneyBadger can be used to record the packet payloads and metadata about the attacks. These attack attraction tactics could range from custom automated web crawlers or programs to control tbb/firefox to manually utilizing a sandboxed browser to visit "high risk" web sites and use "high risk" search terms. In this case we mean high risk to indicate that these may be XKeyscore "Selectors" utilized by the "five-eyes" for automated computer network exploitation (CNE). However, any ISP or country with Internet access should be able to perform these types of attacks upon traffic traversing their networks.
+We further speculate that HoneyBadger (and other passive protocol analyzers that detect TCP injection attacks) could assist computer security researchers who use various tactics to "attract" injection attacks. In that case, HoneyBadger can be used to record the packet payloads and metadata about the attacks. These attack attraction tactics could range from custom automated web crawlers or programs to control tbb/firefox to manually utilizing a sandboxed browser to visit "high risk" web sites and use "high risk" search terms. In this case we mean high risk to indicate that these may be XKeyscore "Selectors" utilized by the "five-eyes" for automated computer network exploitation. However, any ISP or country with Internet access should be able to perform these types of attacks upon traffic traversing their networks.
 
 Tor relay operators may be interested in running HoneyBadger to collect statistics about attacks that are targetting users of the Tor network. Only the Tor exit relay operators will be able to detect if a Tor user's TCP traffic has been attacked by an injection... therefore it might make sense for there to be an "opt-in" mechanism for Tor users wishing to be alerted when their traffic has been attacked.
 
 It is also possible for Tor users to operate their own Tor exit relays AND run honeybadger on them all to record attacks upon their own traffic. In this case even if the Tor exit's country's telecommunications laws are very strict it should still be legal given that the operator consents to recording her own traffic.
-
-
-
-sandboxing
-----------
-
-When conducting these experiments the application should be thoroughly sandboxed because it will most likely become compromised. Clearly Qubes OS is the most secure and convenient choice for software sandboxing on workstations with insecure applications such as web browsers.
-
-https://www.qubes-os.org/
-
-Perhaps some researchers will operate with the threat model assumption that for this type of scenario it is better to not even run the compromised application on any of your own person computer equipment  at all. If your goal is to expose the attacks upon Tor users then you have the option to instead run the Tor Browser Bundle on a  cheap remote VPS (virtual private server). You can use ssh + vnc to interact with the browser remotely. I am a fan of this pure python VNC client that a friend pointed me to:
-
-https://code.google.com/p/python-vnc-viewer
-
-You can also run the Tor Browser Bundle and other browsers on a Raspberry Pi 2 running archlinux arm. This hardware might be cheaper to replace and easier to isolate. I've successfully built the Tor Browser Bundle for the Raspberry Pi 2 running ARM Archlinux, details here:
-
-https://trac.torproject.org/projects/tor/ticket/12631#comment:6
-
 
 
 
@@ -124,3 +108,6 @@ url references
 .. [18] https://wikileaks.org/spyfiles/files/0/296_GAMMA-201110-FinFly_Web.pdf
 .. [19] http://www.washingtonpost.com/world/national-security/spyware-tools-allow-buyers-to-slip-malicious-code-into-youtube-videos-microsoft-pages/2014/08/15/31c5696c-249c-11e4-8593-da634b334390_story.html
 .. [20] http://c-skills.blogspot.de/2013/11/killing-schrodingers-cat.html
+.. [21] https://blog.fox-it.com/2015/04/20/deep-dive-into-quantum-insert/
+.. [22] http://octarineparrot.com/assets/msci_paper.pdf
+.. [23] https://github.com/libpnet/libpnet/issues/90
