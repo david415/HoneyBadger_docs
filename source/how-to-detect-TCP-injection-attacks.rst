@@ -1,6 +1,6 @@
 
 
-how to detect TCP Injection attacks
+how to detect TCP injection attacks
 ===================================
 
 abstract
