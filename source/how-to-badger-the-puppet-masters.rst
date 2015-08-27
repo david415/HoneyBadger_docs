@@ -12,6 +12,11 @@ Many of these well-funded state/world-class adversaries are able to completely a
 
 Widespread adoption of TCP injection attack detection software such as HoneyBadger will diminish the effective secrecy of these attacks. Additionally, these deployments of HoneyBadger could provide enlightening attack statistics that may prove useful to security researchers, contributing to the responsible disclosure of stock-piled zero-days that currently threaten our intellectual freedoms.
 
+honeybadger source code:
+https://github.com/david415/HoneyBadger
+
+honeybadger documentation:
+https://honeybadger.readthedocs.org/en/latest/
 
 
 introduction
@@ -37,7 +42,7 @@ There exist multiple entities world wide that posses the capability to perform t
 TCP injection attack categories
 -------------------------------
 
-Below I've outlined 5 categories of TCP injection attack... but more broadly speaking there are two categories of TCP injection attack: "handshake hijack" and "post-handshake stream injection".
+Below I've outlined 5 categories of TCP injection attack... but more broadly speaking there are three categories of TCP injection attack: "handshake hijack", "post-handshake stream injection" and "censorship injection".
 
 ::
 
