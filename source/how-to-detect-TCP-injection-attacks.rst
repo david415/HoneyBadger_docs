@@ -6,9 +6,9 @@ how to detect TCP injection attacks
 abstract
 --------
 
-HoneyBadger is a passive TCP protocol analyzer whose only purpose in life is to detect and optionally record TCP injection attacks. HoneyBadger has been called a "Quantum-Insert detector" because it can detect the NSA's "Quantum" attacks on TCP. These TCP injection attacks are clearly not just used by the NSA, but by various entities around the world. [16]_
+HoneyBadger is a passive TCP protocol analyzer that detects and optionally records TCP injection attacks. HoneyBadger has been called a "Quantum-Insert detector" because it can detect the NSA's "Quantum" attacks on TCP. These TCP injection attacks are clearly not just used by the NSA, but by various entities around the world. [16]_
 
-Many of these well-funded state/world-class adversaries are able to completely automate the compromising of computers using these TCP injection attacks. This is especially dangerous to journalists and activists when this auto-compromising happens based on key-word searches and participation in specific online forums.
+Many of these well-funded state/world-class adversaries are able to completely automate the compromising of computers using these TCP injection attacks against real people to violate their human rights. This could be especially dangerous to journalists and activists when this auto-compromising happens based on key-word searches and participation in specific online forums.
 
 Deployments of HoneyBadger could provide enlightening attack statistics that may prove useful to security researchers, contributing to the responsible disclosure of stock-piled zero-days that currently threaten our intellectual freedoms.
 
@@ -22,7 +22,7 @@ https://honeybadger.readthedocs.org/en/latest/
 introduction
 ------------
 
-Powerful entities world wide are stock piling zero-days. TCP injection attacks are used to deliver these attacks. The more sophisticated adversaries will use a security domain isolation policy to make sure their attack logic is located in a protected area of their network while they utilize multiple network taps and injection hosts in multiple locations. It is clear from the Snowden documents that at least in the past the NSA has utilized botnet (large groups of compromise computers connected to the Internet) host as "Quantum Shooters", hosts that send the injection attack packets to the target upon receiving "injection tips" (recent TCP connection meta data including Sequence numbers read from a network tap).
+Powerful entities world wide are stock piling zero-days. TCP injection attacks are used to deliver these attacks. The more sophisticated adversaries will use a security domain isolation policy to make sure their attack logic is located in a protected area of their network while they utilize multiple network taps and injection hosts in multiple locations. It is clear from the Snowden documents that at least in the past the NSA has utilized botnet (groups of compromised computers connected to the Internet) hosts as "Quantum Shooters", hosts that send the injection attack packets to the target upon receiving "injection tips" (recent TCP connection meta data including Sequence numbers read from a network tap).
 
 
 
@@ -71,7 +71,7 @@ stream injection detection
 
 Segment veto and sloppy injection attacks are detected by means of a retrospective analysis. HoneyBadger reassembles the TCP stream into a ring buffer so that received packets with overlapping data can be compared to the latest reassembled portion of our TCP stream. If their corresponding stream data is the same then of course the packet came from a normal TCP retransmission. However if their contents differ at all this must mean that a TCP injection attack attempt was made. HoneyBadger performs TCP directional state tracking, for each direction it keeps track of the "next Sequence" value. The reassembled TCP stream which is written to a ring buffer is traversed for content comparison for each packet that has a Sequence proceeding the TCP state-machine's "next Sequence".
 
-In principal HoneyBadger of course cannot determine which packet was sent by an attacker and which was sent by the legit connection party. However we speculate that in the wild, injected packets will have interesting and varying TTLs. This and other header fields might make it possible to develop some heuristics for distinguishing injected packets. That speculation aside, HoneyBadger's priority is to detect and record TCP attack attempts with the utmost precision.
+In principal HoneyBadger of course cannot determine which packet was sent by an attacker and which was sent by the legit connection party. However we speculate that in the wild, injected packets will have interesting and varying TTLs. This and other header fields might make it possible to develop some heuristics for distinguishing injected packets. That speculation aside, HoneyBadger does detect and record TCP injection attack attempts with precision.
 
 
 
