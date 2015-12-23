@@ -12,6 +12,7 @@ Many of these well-funded state/world-class adversaries are able to completely a
 
 Deployments of HoneyBadger could provide enlightening attack statistics that may prove useful to security researchers, contributing to the responsible disclosure of stock-piled zero-days that currently threaten our intellectual freedoms.
 
+
 honeybadger source code:
 https://github.com/david415/HoneyBadger
 
@@ -84,7 +85,7 @@ In the context of TCP injection attacks, a honeypot might include two main sandb
 
 We further speculate that HoneyBadger (and other passive protocol analyzers that detect TCP injection attacks) could assist computer security researchers who use various tactics to "attract" injection attacks. In that case, HoneyBadger can be used to record the packet payloads and metadata about the attacks. These attack attraction tactics could range from custom automated web crawlers or programs to control tbb/firefox to manually utilizing a sandboxed browser to visit "high risk" web sites and use "high risk" search terms. In this case we mean high risk to indicate that these may be XKeyscore "Selectors" utilized by the "five-eyes" for automated computer network exploitation. However, any ISP or country with Internet access should be able to perform these types of attacks upon traffic traversing their networks.
 
-Tor relay operators may be interested in running HoneyBadger to collect statistics about attacks that are targetting users of the Tor network. Only the Tor exit relay operators will be able to detect if a Tor user's TCP traffic has been attacked by an injection... therefore it might make sense for there to be an "opt-in" mechanism for Tor users wishing to be alerted when their traffic has been attacked.
+Tor exit relay operators may be interested in running HoneyBadger to collect statistics about attacks that are targetting users of the Tor network. Only the Tor exit relay operators will be able to detect if a Tor user's TCP traffic has been attacked by an injection... therefore it might make sense for there to be an "opt-in" mechanism for Tor users wishing to be alerted when their traffic has been attacked.
 
 It is also possible for Tor users to operate their own Tor exit relays AND run honeybadger on them all to record attacks upon their own traffic. In this case even if the Tor exit's country's telecommunications laws are very strict it should still be legal given that the operator consents to recording her own traffic.
 
