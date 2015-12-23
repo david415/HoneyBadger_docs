@@ -8,7 +8,7 @@ abstract
 
 HoneyBadger is a passive TCP protocol analyzer that detects and optionally records TCP injection attacks. HoneyBadger has been called a "Quantum-Insert detector" because it can detect the NSA's "Quantum" attacks on TCP. These TCP injection attacks are clearly not just used by the NSA, but by various entities around the world. [16]_
 
-Many of these well-funded state/world-class adversaries are able to completely automate the compromising of computers using these TCP injection attacks against real people to violate their human rights. This could be especially dangerous to journalists and activists when this auto-compromising happens based on key-word searches and participation in specific online forums.
+Many of these well-funded state/world-class adversaries are able to completely automate the compromising of computers using these TCP injection attacks against real people to violate their human rights. This could be especially dangerous when this auto-compromising happens based on key-word searches and participation in specific online forums.
 
 Deployments of HoneyBadger could provide enlightening attack statistics that may prove useful to security researchers, contributing to the responsible disclosure of stock-piled zero-days that currently threaten our intellectual freedoms.
 
