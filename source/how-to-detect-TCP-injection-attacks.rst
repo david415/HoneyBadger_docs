@@ -101,7 +101,7 @@ https://github.com/inliniac/suricata
 future work and projects
 ------------------------
 
-I hope that other software developers will create additional tools to detect TCP injection attacks. So far the only other group that has done so publicly is FOX-IT with their patch to Snort. [21]_ If language security is a concern then you might prefer to use HoneyBadger which is pure Golang (except for the optional usage of the libpcap for sniffing). Rust is also an excellent choice however there does not yet exist a low level networking library for Rust with a TCP decoding layer... however libpnet shows lots of promise. [22]_
+I hope that other software developers will continue to create additional tools to detect TCP injection attacks. If language security is a concern then you might prefer to use HoneyBadger which is pure Golang (except for the optional usage of the libpcap for sniffing). Rust is also an excellent choice however there does not yet exist a low level networking library for Rust with a TCP decoding layer; however libpnet shows lots of promise. [22]_
 
 In the context of TCP injection attacks, a honeypot might include two main sandboxed componenents; an application that will use a plaintext TCP protocol which may become compromised when it receives a TCP injection attack, and a TCP injection attack detection system with (optional) full-take logging (i.e. HoneyBadger).
 
