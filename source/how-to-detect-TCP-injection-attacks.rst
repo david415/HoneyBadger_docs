@@ -75,6 +75,28 @@ Segment veto and sloppy injection attacks are detected by means of a retrospecti
 In principal HoneyBadger of course cannot determine which packet was sent by an attacker and which was sent by the legit connection party. However we speculate that in the wild, injected packets will have interesting and varying TTLs. This and other header fields might make it possible to develop some heuristics for distinguishing injected packets. That speculation aside, HoneyBadger does detect and record TCP injection attack attempts with precision.
 
 
+other projects
+--------------
+
+Recently it was brought to my attention that NetResec wrote another article
+about TCP injection attacks entitled "Covert Man on the Side Attacks" [23]_
+wherein they announce yet another tool written in golang called qisniff.
+
+I tested qisniff with my archive of pcap files ( https://github.com/david415/honeybadger-pcap-files )
+and it does detect segment veto and sloppy injection but not handshake hijack injection attacks.
+https://github.com/zond/qisniff
+
+Bro:
+https://www.bro.org/index.html
+
+FOX-IT's patch to snort:
+https://github.com/fox-it/quantuminsert/tree/master/detection/snort
+
+Suricata:
+https://github.com/fox-it/quantuminsert/tree/master/detection/suricata
+https://github.com/inliniac/suricata
+
+
 
 future work and projects
 ------------------------
@@ -116,3 +138,4 @@ url references
 .. [20] http://c-skills.blogspot.de/2013/11/killing-schrodingers-cat.html
 .. [21] https://blog.fox-it.com/2015/04/20/deep-dive-into-quantum-insert/
 .. [22] http://octarineparrot.com/assets/msci_paper.pdf
+.. [23] http://www.netresec.com/?page=Blog&month=2015-09&post=Covert-Man-on-the-Side-Attacks
