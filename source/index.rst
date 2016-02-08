@@ -4,14 +4,15 @@ HoneyBadger
 
 .. image:: images/honey_badger-white-sm-1.png
 | 
-.. image:: https://drone.io/github.com/david415/HoneyBadger/status.png
-  :target: https://drone.io/github.com/david415/HoneyBadger/latest
+.. image:: https://travis-ci.org/david415/HoneyBadger.svg?branch=master
+  :target: https://travis-ci.org/david415/HoneyBadger
 
-.. image:: https://coveralls.io/repos/david415/HoneyBadger/badge.svg?branch=master
-  :target: https://coveralls.io/r/david415/HoneyBadger?branch=master 
+.. image:: https://coveralls.io/repos/github/david415/HoneyBadger/badge.svg?branch=master
+  :target: https://coveralls.io/github/david415/HoneyBadger
 
-.. image:: https://api.flattr.com/button/flattr-badge-large.png
-  :target: https://flattr.com/submit/auto?user_id=david415&url=https%3A%2F%2Fgithub.com%2Fdavid415%2FHoneyBadger
+.. image:: https://godoc.org/github.com/david415/HoneyBadger?status.svg
+  :target: https://godoc.org/github.com/david415/HoneyBadger
+
 |
 
 
@@ -331,7 +332,7 @@ The attack reports contains important information that is highly relevant to you
 * TCP sequence of overlap start
 * TCP sequence of overlap end
 
-https://godoc.org/github.com/david415/HoneyBadger#AttackReport
+https://godoc.org/github.com/david415/HoneyBadger/types#Event
 
 
 
