@@ -30,7 +30,7 @@ what does HoneyBadger do and **not** do?
 
 **DO**
 
-- passively analyze of TCP (transmission control protocol) traffic, tries to detect evidence of a MOTS (man-on-the-side) attack
+- passive analysis of TCP (transmission control protocol) traffic, tries to detect evidence of a MOTS (man-on-the-side) attack
 
 - optionally can produce TCP injection attack reports and record pcap files of connections with attacks
 
@@ -97,6 +97,92 @@ Linux users should run honeyBadger as an unprivileged user. First run setcap as 
   setcap cap_net_raw,cap_net_admin=eip honeyBadger
 
 
+capturing TCP traffic and attack reports on Linux
+-------------------------------------------------
+
+You can tell honeyBadger to analyze the wire with Linux's AF_PACKET capture mode::
+
+  ./honeyBadger -max_concurrent_connections=1000 -max_pcap_log_size=100 -max_pcap_rotations=10 \
+  -max_ring_packets=40 -metadata_attack_log=false -total_max_buffer=1000 -connection_max_buffer=100 \
+  -archive_dir=/home/user/gopath/src/github.com/david415/HoneyBadger/cmd/honeyBadger/archive -log_packets \
+  -l=/home/user/gopath/src/github.com/david415/HoneyBadger/cmd/honeyBadger/incoming -log_packets=true \
+  -i=eth0 -daq=AF_PACKET
+
+  2016/02/07 14:16:32 HoneyBadger: comprehensive TCP injection attack detection.
+  2016/02/07 14:16:32 PageCache: created 1024 new pages
+  2016/02/07 14:16:32 Starting AF_PACKET packet capture on interface eth0
+
+
+Or use it to analyze pcap files like this::
+
+  user@go-dev2:~/gopath/src/github.com/david415/HoneyBadger/cmd/honeyBadger$ ./honeyBadger \
+  -max_concurrent_connections=1000 -max_pcap_log_size=100 -max_pcap_rotations=10 -max_ring_packets=40 \
+  -metadata_attack_log=false -total_max_buffer=1000 -connection_max_buffer=100 -archive_dir=./archive \
+  -log_packets -l=./incoming -pcapfile=./tshark2.pcap
+
+
+honeyBadger will spew lots of things to stdout. Using the above command,
+it will write the following into the "archive" directory:
+
+- pcap file(s) for each connection which triggered detection for a TCP injection attack
+
+- attack report JSON file(s) which include relavant meta-data that can be used to refer
+  to specific sections of the pcap file AND base64 blobs of payload data of the overlapping
+  TCP stream segments
+
+
+Here's an example output with a pcap file containing an ordered coalesce injection::
+
+  2016/02/05 23:30:01 Starting libpcap packet capture on file ./tshark2.pcap
+  2016/02/05 23:30:01 connected 127.0.0.1:59670-127.0.0.1:9666
+  2016/02/05 23:30:01 race winner stream segment:
+  2016/02/05 23:30:01 00000000  20 69 73 20 6e 65 63 65  73 73 61 72 79 20 66 6f  | is necessary fo|
+  00000010  72 20 61 6e 20 6f 70 65  6e 20 73 6f 63 69 65 74  |r an open societ|
+  00000020  79 20 69 6e 20 74 68 65  20 65 6c 65 63 74 72 6f  |y in the electro|
+  00000030  6e 69 63 20 61 67 65 2e  20 50 72 69 76 61 63 79  |nic age. Privacy|
+  00000040  20 69 73 20 6e 6f 74 20  73 65 63 72 65 63 79 2e  | is not secrecy.|
+  00000050  20 41 20 70 72 69 76 61  74 65 20 6d 61 74 74 65  | A private matte|
+  00000060  72 20 69 73 20 73 6f 6d  65 74 68 69 6e 67 20 6f  |r is something o|
+  00000070  6e 65 20 64 6f 65 73 6e  27 74 20 77 61 6e 74 20  |ne doesn't want |
+  00000080  74 68 65 20 77 68 6f 6c  65 20 77 6f 72 6c 64 20  |the whole world |
+  00000090  74 6f 20 6b 6e 6f 77 2c  20 62 75 74 20 61 20 73  |to know, but a s|
+  000000a0  65 63 72 65 74 20 6d 61  74 74 65 72 20 69 73 20  |ecret matter is |
+  000000b0  73 6f 6d 65 74 68 69 6e  67 20 6f 6e 65 20 64 6f  |something one do|
+  000000c0  65 73 6e 27 74 20 77 61  6e 74 20 61 6e 79 62 6f  |esn't want anybo|
+  000000d0  64 79 20 74 6f 20 6b 6e  6f 77 2e 20 50 72 69 76  |dy to know. Priv|
+  000000e0  61 63 79 20 69 73 20 74  68 65 20 70 6f 77 65 72  |acy is the power|
+  000000f0  20 74 6f 20 73 65 6c 65  63 74 69 76 65 6c 79 20  | to selectively |
+  00000100  72 65 76 65 61 6c 20 6f  6e 65 73 65 6c 66 20 74  |reveal oneself t|
+  00000110  6f 20 74 68 65 20 77 6f  72 6c 64 2e              |o the world.|
+  2016/02/05 23:30:01 race loser stream segment:
+  2016/02/05 23:30:01 00000000  50 72 69 76 61 63 79 20  69 73 20 6e 65 63 65 73  |Privacy is neces|
+  00000010  73 61 72 79 20 66 6f 72  20 61 6e 20 6f 70 65 6e  |sary for an open|
+  00000020  20 73 6f 63 69 65 74 79  20 69 6e 20 74 68 65 20  | society in the |
+  00000030  65 6c 65 63 74 72 6f 6e  69 63 20 61 67 65 2e 20  |electronic age. |
+  00000040  50 72 69 76 61 63 79 20  69 73 20 6e 6f 74 20 73  |Privacy is not s|
+  00000050  65 63 72 65 63 79 2e 20  41 20 70 72 69 76 61 74  |ecrecy. A privat|
+  00000060  65 20 6d 61 74 74 65 72  20 69 73 20 73 6f 6d 65  |e matter is some|
+  00000070  74 68 69 6e 67 20 6f 6e  65 20 64 6f 65 73 6e 27  |thing one doesn'|
+  00000080  74 20 77 61 6e 74 20 74  68 65 20 77 68 6f 6c 65  |t want the whole|
+  00000090  20 77 6f 72 6c 64 20 74  6f 20 6b 6e 6f 77 2c 20  | world to know, |
+  000000a0  62 75 74 20 61 20 73 65  63 72 65 74 20 6d 61 74  |but a secret mat|
+  000000b0  74 65 72 20 69 73 20 73  6f 6d 65 74 68 69 6e 67  |ter is something|
+  000000c0  20 6f 6e 65 20 64 6f 65  73 6e 27 74 20 77 61 6e  | one doesn't wan|
+  000000d0  74 20 61 6e 79 62 6f 64  79 20 74 6f 20 6b 6e 6f  |t anybody to kno|
+  000000e0  77 2e 20 50 72 69 76 61  63 79 20 69 73 20 74 68  |w. Privacy is th|
+  000000f0  65 20 70 6f 77 65 72 20  74 6f 20 73 65 6c 65 63  |e power to selec|
+  00000100  74 69 76 65 6c 79 20 72  65 76 65 61 6c 20 6f 6e  |tively reveal on|
+  00000110  65 73 65 6c 66 20 74 6f  20 74 68 65              |eself to the|
+  2016/02/05 23:30:01 detected an ordered coalesce injection
+  2016/02/05 23:30:01 FIN-WAIT-1: non-ACK packet received.
+  2016/02/05 23:30:01 ReadPacketData got EOF
+  2016/02/05 23:30:01 Close()
+  2016/02/05 23:30:01 1 connection(s) closed.
+  2016/02/05 23:30:01 Supervisor.Stopped()
+  2016/02/05 23:30:01 graceful shutdown: packet-source stopped
+
+
+
 Tor exit relay operator legal considerations
 --------------------------------------------
 
@@ -107,22 +193,33 @@ Tor exit relay operator legal considerations
 - It is the author's firm belief that it is definitely legal to monitor your own traffic using HoneyBadger with the full-take logging features.
 
 
-how to sniff only your own traffic on a Tor exit you control
-------------------------------------------------------------
-
-Soon I'd like to write more here about various ways that you can isolate your own traffic on a Tor exit relay you control. Here's one such idea:
-
-Client -> localsocks-proxy -> tor connection -> tor exit -> tor-exit-socks-proxy-server-> internet
-
-However... Firefox/TBB currently does not support Socks Proxy username/password authentication... so we should probably use a different tactic to isolate our traffic?
-
-
 what to do with HoneyBadger collected data
 ------------------------------------------
 
-We expect HoneyBadger to have various false positive bugs... and furthermore there are in fact various ways in which network anomalies can appear to be injection attacks or accidentally inject data. I have seen in the wild misbehaving load balancers etc.
+If your honeybadger generates an attack report and you have specified the CLI option `-metadata_attack_log=false` then you may be interested in the `honeybadgerReportTool`; it displays a dump output which includes ASCII and hex... this hex diff makes it **very** obvious what data was injected. This simple utility is located in the honeybadger code repo here: https://github.com/david415/HoneyBadger/blob/master/cmd/honeybadgerReportTool/main.go
 
-If your honeybadger generates an attack report and you have specified the CLI option `-metadata_attack_log=false` then you may be interested in the `honeybadgerReportTool`; it displays a dump output which includes ASCII and hex... this color coated hex diff makes it **very** obvious what data was injected. This simple utility is located in the honeybadger code repo here: https://github.com/david415/HoneyBadger/blob/master/cmd/honeybadgerReportTool/main.go
+Here's an example run::
+
+  $ ./honeybadgerReportTool ../honeyBadger/archive/127.0.0.1:9666-127.0.0.1:59763.attackreport.json
+  attack report: ../honeyBadger/archive/127.0.0.1:9666-127.0.0.1:59763.attackreport.json
+  Event Type: ordered coalesce 2
+  Flow: 127.0.0.1:9666-127.0.0.1:59763
+  Time: 2016-02-07 10:09:49.2487 +0000 UTC
+  Packet Number: 0
+  HijackSeq: 0 HijackAck: 0
+  Start: 1427250824 End: 1427250870
+  Base Sequence: 1427250814
+
+  Overlapping portion of reassembled TCP Stream:
+  00000000  50 72 69 76 61 63 79 20  69 73 20 6e 65 63 65 73  |Privacy is neces|
+  00000010  73 61 72 79 20 66 6f 72  20 61 6e 20 6f 70 65 6e  |sary for an open|
+  00000020  20 73 6f 63 69 65 74 79  20 69 6e 20 74 68        | society in th|
+
+  Injection packet whose contents did not coalesce into the TCP Stream:
+  00000000  37 0a 36 0a 35 0a 35 34  0a 34 0a 34 0a 34 0a 36  |7.6.5.54.4.4.4.6|
+  00000010  0a 34 36 33 32 36 33 34  0a 36 33 34 36 34 0a 33  |.4632634.63464.3|
+  00000020  36 0a 34 33 36 0a 34 33  36 0a 34 33 36 0a        |6.436.436.436.|
+
 
 
 honeyBadger commandline arguments and usage
