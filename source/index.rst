@@ -17,9 +17,8 @@ HoneyBadger
 
 **TCP attack inquisitor and 0-day catcher.**
 
-- HoneyBadger is primarily a comprehensive TCP stream analysis tool for detecting and recording TCP attacks.
-- HoneyBadger is modern software written in Golang to deal with TCP's very olde injection vulnerabilities.
-- HoneyBadger includes a variety of TCP stream injection attacks written in golang. (2 so far)
+- HoneyBadger is a comprehensive passive TCP protocol analysis tool for detecting and recording TCP injection attacks, also known as a ``Quantum Insert`` detector.
+- HoneyBadger includes a variety of TCP stream injection attacks prototypes also written in golang.
 - Free as in GPLv3 (except for small sections of Google's BSD licensed code) and the source code is available on github:
 
 * https://github.com/david415/HoneyBadger
@@ -30,28 +29,22 @@ what does HoneyBadger do and **not** do?
 
 **DO**
 
-- one purpose in life... To detect (and optionally record) TCP injection attacks and attempts.
+- passively analyze of TCP (transmission control protocol) traffic, tries to detect evidence of a MOTS (man-on-the-side) attack
 
-- passively analyze TCP traffic
-
+- optionally can produce TCP injection attack reports and record pcap files of connections with attacks
 
 **NOT DO**
 
-- HoneyBadger is in fact not a "honey pot"
+- HoneyBadger is not a ``honey pot`` even though it has the word ``honey`` in the name. Sorry ;-p
 
-- HoneyBadger does not send packets
+- HoneyBadger does not send packets on the network
 
-- HoneyBadger does not detect man-in-the-middle attacks
-
-- HoneyBadger does not determine if an attack attempt was successful (I suspect that in the wild TCP attacks will have differing TTLs and other clues that will help us determine if the attack was successful or not)
-
-- HoneyBadger is nothing like the more general purpose tools like Snort, Bro or Wireshark.
+- HoneyBadger does not try to determine if an attack attempt was successful
 
 
 
 installation
 ------------
-
 
 Before building and installing honeybadger I suggest building a modern version of golang from source as described in the instructions here:
 
@@ -63,7 +56,7 @@ Like this::
   cd $HOME
   git clone https://go.googlesource.com/go
   cd go
-  git checkout go1.4.2
+  git checkout go1.5
   cd src
   ./make.bash
 
@@ -135,36 +128,55 @@ honeyBadger commandline arguments and usage
 -------------------------------------------
 
 
-honeyBadger has a rather large commandline usage... but it's not very difficult::
+honeyBadger has a rather large commandline usage::
 
   $ ./honeyBadger -h
   Usage of ./honeyBadger:
-  -afpacket=false: Use AF_PACKET for faster, harder sniffing of packets.
-  -archive_dir="": archive directory for storing attack logs and related pcap files
-  -bpf=false: Use *BSD-only BPF for sniffing packets on non-Linux systems.
-  -connection_max_buffer=0: 
+  -archive_dir string
+   archive directory for storing attack logs and related pcap files
+  -connection_max_buffer int
+
   Max packets to buffer for a single connection before skipping over a gap in data
   and continuing to stream the connection after the buffer.  If zero or less, this
   is infinite.
-  -detect_coalesce_injection=true: Detect coalesce injection attacks
-  -detect_hijack=true: Detect handshake hijack attacks
-  -detect_injection=true: Detect injection attacks
-  -f="tcp": BPF filter for pcap
-  -i="eth0": Interface to get packets from
-  -l="": incoming log dir used initially for pcap files if packet logging is enabled
-  -log_packets=false: if set to true then log all packets for each tracked TCP connection
-  -max_concurrent_connections=0: Maximum number of concurrent connection to track.
-  -max_pcap_log_size=1: maximum pcap size per rotation in megabytes
-  -max_pcap_rotations=10: maximum number of pcap rotations per connection
-  -max_ring_packets=40: Max packets per connection stream ring buffer
-  -metadata_attack_log=true: if set to true then attack reports will only include metadata
-  -pcapfile="": pcap filename to read packets from rather than a wire interface.
-  -s=65536: SnapLen for pcap packet capture
-  -tcp_idle_timeout=5m0s: tcp idle timeout duration
-  -total_max_buffer=0: 
+
+  -daq string
+    	Data AcQuisition packet source: libpcap, AF_PACKET or BSD_BPF (default "libpcap")
+  -detect_coalesce_injection
+    	Detect coalesce injection attacks (default true)
+  -detect_hijack
+    	Detect handshake hijack attacks (default true)
+  -detect_injection
+    	Detect injection attacks (default true)
+  -f string
+    	BPF filter for pcap (default "tcp")
+  -i string
+    	Interface to get packets from (default "eth0")
+  -l string
+    	incoming log dir used initially for pcap files if packet logging is enabled
+  -log_packets
+    	if set to true then log all packets for each tracked TCP connection
+  -max_concurrent_connections int
+    	Maximum number of concurrent connection to track.
+  -max_pcap_log_size int
+    	maximum pcap size per rotation in megabytes (default 1)
+  -max_pcap_rotations int
+    	maximum number of pcap rotations per connection (default 10)
+  -max_ring_packets int
+    	Max packets per connection stream ring buffer (default 40)
+  -metadata_attack_log
+    	if set to true then attack reports will only include metadata (default true)
+  -pcapfile string
+    	pcap filename to read packets from rather than a wire interface.
+  -s int
+    	SnapLen for pcap packet capture (default 65536)
+  -tcp_idle_timeout duration
+    	tcp idle timeout duration (default 5m0s)
+  -total_max_buffer int
+  
   Max packets to buffer total before skipping over gaps in connections and
   continuing to stream connection data.  If zero or less, this is infinite
-  -w="3s": timeout for reading packets off the wire
+  -w string timeout for reading packets off the wire (default "3s")
 
 
 packet acquisition
@@ -176,16 +188,17 @@ There are three ethernet sniffers (also known as packet Data AcQuisition sources
 - BPF (BSD only)
 - libpcap
 
-Currently only our libpcap sniffer supports filtering... that is the ``-f`` flag only affects honeyBadger if you are using the lipcap ethernet sniffer... which is the default unless ``-afpacket`` or ``-bpf`` are set to ``true``.
+Currently only our libpcap sniffer supports filtering... that is the ``-f`` flag only affects honeyBadger if you are using the lipcap ethernet sniffer... which is the default unless you specify the ``-daq`` option with either ``BSD_BPF`` or ``AF_PACKET``.
 
-In any case you must definitely specify a network interface to sniff with ``-i``. ``-w`` and ``-s`` for far only are relevant to the libpcap sniffer and you probably want to use their default values.
+In any case you must definitely specify a network interface to sniff with ``-i``.
+The options ``-w`` and ``-s`` are only relevant to the ``libpcap`` packet capture mode (``-daq``), you probably want to use the default values.
 
 
 logging
 ```````
 
 You must specify a logging directory using ``-l``.
-pcap-packet logging is turned off by default. If you set ``-log_packets`` to ``true`` then honeybadger
+packet logging to pcap file(s) is turned off by default. If you set ``-log_packets`` to ``true`` then honeybadger
 will write one pcap file per connection. Upon connection close honeybadger will delete the pcap logfile
 unless a TCP attack was detected.
 
@@ -203,8 +216,8 @@ have various sensitive information about attack attempts such as:
 - TCP Sequence number boundaries of the injection
 
 If you set ``-metadata_attack_log`` to ``false`` then honeybadger will log the attack packet payload AND the stream overlap.
-This feature is expected to help honeyBadger-Operators to eliminate false positives. Our reporting tool can read the
-json attack report file and print out and ASCII + hex color-coated diff of the injected data versus reassembled TCP stream overlap.
+This feature is expected to help honeyBadger-Operators to eliminate false positives. Our honeybadger attack report tool(s) can read the
+json attack report files and print out and ASCII + hex color-coated diff of the injected data versus reassembled TCP stream overlap.
 
 
 resource boundaries
@@ -269,7 +282,10 @@ procedure
 
 .. code-block:: bash
 
-   ./honeyBadger -i=lo -f="tcp port 9666" -l="." -total_max_buffer=300 -connection_max_buffer=100
+   mkdir archive
+   mkdir incoming
+   ./honeyBadger -i=lo -f="tcp port 9666" -l="." -total_max_buffer=300 -connection_max_buffer=100 \
+     -l ./incoming -archive_dir ./archive -max_concurrent_connections 1000
 
 
 3. run ``sprayInjector`` with these arguments
@@ -312,20 +328,11 @@ The attack reports contains important information that is highly relevant to you
 * time of attack
 * payload of packet with overlaping stream segment (in base64 format)
 * previously assembled stream segment that overlaps with packet payload (in base64 format)
-* TCP sequence of packet
-* end sequence of packet
-* overlap start offset is the number of bytes from the beginning of the packet payload that we have available among the reassembled stream segments for retrospective analysis
-* overlap end offset is the number of bytes from the end of the packet payload that we have in our reassembled stream segments...
+* TCP sequence of overlap start
+* TCP sequence of overlap end
 
 https://godoc.org/github.com/david415/HoneyBadger#AttackReport
 
-
-::
-
-    $ cat 127.0.0.1:9666-127.0.0.1:43716.attackreport.json
-    {"Type":"injection","Flow":"127.0.0.1:9666-127.0.0.1:43716","Time":"2015-01-30T08:38:14.378603859Z","Payload":"bWVvd21lb3dtZW93","Overlap":"aHJzCg==","StartSequence":831278445,"EndSequence":831278456,"OverlapStart":0,"OverlapEnd":4}
-    {"Type":"injection","Flow":"127.0.0.1:9666-127.0.0.1:43716","Time":"2015-01-30T08:38:14.379005763Z","Payload":"bWVvd21lb3dtZW93","Overlap":"cnMK","StartSequence":831278446,"EndSequence":831278457,"OverlapStart":0,"OverlapEnd":3}
-    ...
 
 
 |
