@@ -47,54 +47,46 @@ what does HoneyBadger do and **not** do?
 installation
 ------------
 
-Before building and installing honeybadger I suggest building a modern version of golang from source as described in the instructions here:
+Before building and installing honeybadger you need a working golang.
+You could build from source as described in the instructions here:
 
 https://golang.org/doc/install/source
 
+Or install Google's binary::
 
-Like this::
-
-  cd $HOME
-  git clone https://go.googlesource.com/go
-  cd go
-  git checkout go1.5
-  cd src
-  ./make.bash
+  wget https://storage.googleapis.com/golang/go1.5.3.linux-amd64.tar.gz
+  tar xzf go1.5.3.linux-amd64.tar.gz
 
 
 Setup the golang environment variables::
 
-  export GOPATH=$HOME/go/gopath
-  export PATH=$PATH:$HOME/go/bin:$HOME/go/gopath/bin
+  export GOROOT=/home/human/go
+  export GOPATH=/home/human/gopath
+  export PATH=/home/human/go/bin:/home/human/gopath/bin:$PATH
 
 
-Then after that you can build honeybadger and it's dependencies like this::
+To build on Linux you'll need to install libpcap-dev::
 
-  cd $HOME/go
-  mkdir -p gopath/src/github.com/google
-  cd gopath/src/github.com/google
-  git clone https://github.com/google/gopacket.git
-  mkdir -p $HOME/go/gopath/src/github.com/david415
-  cd $HOME/go/gopath/src/github.com/david415
-  git clone https://github.com/david415/HoneyBadger.git
-  cd HoneyBadger/cmd/honeyBadger
-  go build
+  sudo apt-get install libpcap-dev
 
 
-preparing to run HoneyBadger
-----------------------------
+Use the "go get" tool to fetch, build and install honeybadger::
 
-If you run Linux and would like to use the AF_PACKET sniffer then you should
+  go get -v github.com/david415/HoneyBadger/cmd/honeyBadger
+
+
+If you run Linux and would like to use the **AF_PACKET** sniffer then you should
 also disable the segment offloading options on the relavent network device(s) ::
 
-  ethtool -K eth0 gso off
-  ethtool -K eth0 tso off
-  ethtool -K eth0 gro off
+  sudo apt-get install ethtool
+  sudo ethtool -K eth0 gso off
+  sudo ethtool -K eth0 tso off
+  sudo ethtool -K eth0 gro off
 
 
 Linux users should run honeyBadger as an unprivileged user. First run setcap as root like so::
 
-  setcap cap_net_raw,cap_net_admin=eip honeyBadger
+  sudo setcap cap_net_raw,cap_net_admin=eip honeyBadger
 
 
 capturing TCP traffic and attack reports on Linux
@@ -102,11 +94,9 @@ capturing TCP traffic and attack reports on Linux
 
 You can tell honeyBadger to analyze the wire with Linux's AF_PACKET capture mode::
 
-  ./honeyBadger -max_concurrent_connections=1000 -max_pcap_log_size=100 -max_pcap_rotations=10 \
+  honeyBadger -max_concurrent_connections=1000 -max_pcap_log_size=100 -max_pcap_rotations=10 \
   -max_ring_packets=40 -metadata_attack_log=false -total_max_buffer=1000 -connection_max_buffer=100 \
-  -archive_dir=/home/user/gopath/src/github.com/david415/HoneyBadger/cmd/honeyBadger/archive -log_packets \
-  -l=/home/user/gopath/src/github.com/david415/HoneyBadger/cmd/honeyBadger/incoming -log_packets=true \
-  -i=eth0 -daq=AF_PACKET
+  -archive_dir=/home/human/archive -l=/home/human/incoming -log_packets=true -i=eth0 -daq=AF_PACKET
 
   2016/02/07 14:16:32 HoneyBadger: comprehensive TCP injection attack detection.
   2016/02/07 14:16:32 PageCache: created 1024 new pages
@@ -115,10 +105,9 @@ You can tell honeyBadger to analyze the wire with Linux's AF_PACKET capture mode
 
 Or use it to analyze pcap files like this::
 
-  user@go-dev2:~/gopath/src/github.com/david415/HoneyBadger/cmd/honeyBadger$ ./honeyBadger \
-  -max_concurrent_connections=1000 -max_pcap_log_size=100 -max_pcap_rotations=10 -max_ring_packets=40 \
-  -metadata_attack_log=false -total_max_buffer=1000 -connection_max_buffer=100 -archive_dir=./archive \
-  -log_packets -l=./incoming -pcapfile=./tshark2.pcap
+  honeyBadger -max_concurrent_connections=1000 -max_pcap_log_size=100 -max_pcap_rotations=10 \
+  -max_ring_packets=40 -metadata_attack_log=false -total_max_buffer=1000 -connection_max_buffer=100
+  -archive_dir=./archive -log_packets -l=./incoming -pcapfile=./tshark2.pcap
 
 
 honeyBadger will spew lots of things to stdout. Using the above command,
