@@ -36,7 +36,7 @@ what does HoneyBadger do and **not** do?
 
 **NOT DO**
 
-- HoneyBadger is not a ``honey pot`` even though it has the word ``honey`` in the name. Sorry ;-p
+- HoneyBadger is not a ``honey pot`` even though it has the word ``honey`` in the name. But it could certainly be used with a ``honey pot``.
 
 - HoneyBadger does not send packets on the network
 
