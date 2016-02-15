@@ -13,32 +13,22 @@ HoneyBadger
 |
 
 
-**TCP attack inquisitor and 0-day catcher.**
+**HoneyBadger is a TCP attack inquisitor and 0-day catcher.**
 
-- HoneyBadger is a comprehensive passive TCP protocol analysis tool for detecting and recording TCP injection attacks, also known as a ``Quantum Insert`` detector.
-- HoneyBadger includes a variety of TCP stream injection attacks prototypes also written in golang.
+- comprehensive passive TCP protocol analysis for detecting and recording TCP injection attacks, also known as a ``Quantum Insert`` detector. As such, it performs a passive analysis of TCP (transmission control protocol) traffic and tries to detect evidence of a MOTS (man-on-the-side) attack.
+- optionally can produce TCP injection attack reports and record pcap files of connections with attacks
+- HoneyBadger includes a variety of TCP injection attacks prototypes also written in golang.
 - Free as in GPLv3 (except for small sections of Google's BSD licensed code) and the source code is available on github:
 
 * https://github.com/david415/HoneyBadger
 
 
-what does HoneyBadger do and **not** do?
-----------------------------------------
-
-**DO**
-
-- passive analysis of TCP (transmission control protocol) traffic, tries to detect evidence of a MOTS (man-on-the-side) attack
-
-- optionally can produce TCP injection attack reports and record pcap files of connections with attacks
-
-**NOT DO**
+what does HoneyBadger **not** do?
+---------------------------------
 
 - HoneyBadger is not a ``honey pot`` even though it has the word ``honey`` in the name. But it could certainly be used with a ``honey pot``.
-
 - HoneyBadger does not send packets on the network
-
-- HoneyBadger does not try to determine if an attack attempt was successful
-
+- HoneyBadger does not try to determine if an attack attempt was successful because in principal we cannot know which packets come from the attack and which come from the legit party.
 
 
 installation
