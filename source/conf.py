@@ -104,7 +104,9 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    "body_text":"gray_3"
+    "body_text":"gray_3",
+    "logo":"images/honey_badger-white-sm-1.png",
+    "logo_name": "HoneyBadger",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -155,7 +157,7 @@ html_static_path = ['_static']
 #html_domain_indices = True
 
 # If false, no index is generated.
-#html_use_index = True
+html_use_index = False
 
 # If true, the index is split into individual pages for each letter.
 #html_split_index = False
