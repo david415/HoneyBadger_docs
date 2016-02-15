@@ -175,8 +175,6 @@ Here's an example output with a pcap file containing an ordered coalesce injecti
 Tor exit relay operator legal considerations
 --------------------------------------------
 
-- Telecommunications laws in your Tor exit relay country may prohibit recording user's content without their consent. HoneyBadger therefore does not record packets (pcap log) by default; and attack reports only record metadata. IP addresses and TCP ports are recorded in the attack metadata reports... this sensitive data should be anonymized before making it public.
-
 - As far as my humble legal-system understanding is concerned it should be legal to operate an opt-in HoneyBadger service for users who consent to having their traffic recorded.
 
 - It is the author's firm belief that it is definitely legal to monitor your own traffic using HoneyBadger with the full-take logging features.
