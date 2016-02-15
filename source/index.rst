@@ -423,6 +423,7 @@ The attack reports contains important information that is highly relevant to you
 * TCP sequence of overlap start
 * TCP sequence of overlap end
 
+Our API docs describe the exact structure of the TCP injection Event struct type:
 https://godoc.org/github.com/david415/HoneyBadger/types#Event
 
 
