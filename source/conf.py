@@ -104,7 +104,8 @@ html_theme = 'default'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    "bgcolor":"white"
+    "bgcolor":"black",
+    "fgcolor":"white"
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
