@@ -337,12 +337,11 @@ for honeybadger::
 
   mkdir archive incoming
 
-My network interface happens to be called ``vio0``, therefore I run honeyBadger like this::
+My network interface happens to be called ``vio0``. I can now run honeyBadger as non-root like this::
 
   honeyBadger -max_concurrent_connections=1000 -max_pcap_log_size=100 -max_pcap_rotations=10 \
   -max_ring_packets=40 -metadata_attack_log=false -total_max_buffer=1000 -connection_max_buffer=100 \
   -archive_dir=/home/human/archive -l=/home/human/incoming -log_packets=true -i=vio0 -daq=BSD_BPF
-
 
 
 honeyBadger commandline arguments and usage
