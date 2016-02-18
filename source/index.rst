@@ -196,6 +196,155 @@ Here's an example run::
 
 
 
+deployment on OpenBSD example
+-----------------------------
+
+fetch and verify OpenBSD
+````````````````````````
+
+There are service providers which allow you to install your compute image OS from an ISO image.
+In this case we can upload an OpenBSD ISO image and run that instead of Linux. Here's some notes I took
+while setting up my OpenBSD compute instance for packet capturing with honeybadger:
+
+
+get the iso image::
+
+  wget http://openbsd.cs.fau.de/pub/OpenBSD/5.8/amd64/install58.iso
+
+and then get the hash and signature to verify with::
+
+  wget http://openbsd.cs.fau.de/pub/OpenBSD/5.8/amd64/SHA256
+  wget http://openbsd.cs.fau.de/pub/OpenBSD/5.8/amd64/SHA256.sig
+
+
+Next we check the hash::
+
+  sha256sum install58.iso
+  2edd369c4b5f1960f9c974ee7f7bbe4105137968c1542d37411e83cb79f7f6f2  install58.iso
+
+  grep install58.iso SHA256
+  SHA256 (install58.iso) = 2edd369c4b5f1960f9c974ee7f7bbe4105137968c1542d37411e83cb79f7f6f2
+
+
+OK good, the hashes match. Now check the signature of the hash; the docs say to do this::
+
+  signify -Cp /etc/signify/openbsd-XX-base.pub -x SHA256.sig install*.iso
+
+
+If you do not have access to an OpenBSD CD then you'll want to download the public key multiple
+times from various locations on the Internet (via multiple Tor circuits) until you are comfortable
+with running the giant binary blob of code you just downloaded. ::
+
+  git clone https://github.com/chneukirchen/signify.git
+  cd signify
+  make
+
+  :~$ ./signify -Cp openbsd-58-base.pub -x SHA256.sig install58.iso
+  Signature Verified
+  install58.iso: OK
+
+
+build the latest stable golang (1.5.x) for OpenBSD
+``````````````````````````````````````````````````
+
+Once your OpenBSD compute instance is booted then you can login and make
+many changes; I'm going to follow the instructions here
+https://golang.org/doc/install/source
+and build golang 1.5.x from source.
+
+as root install some dependencies::
+
+  pkg add bash
+  pkg_add git
+  pkg_add go # as of this writing installs go-1.4.2
+
+this next trick worked for me to get the go-1.5 bootstrap working. as root::
+
+  cd /usr
+  mkdir go/bin
+  cp -r bin/go* go/bin
+
+and then as the human user I setup these env vars::
+
+  export CGO_ENABLED=0
+  export GOARCH=amd64
+  export GOOS=openbsd
+  export GOPATH=/home/human/go
+  export GOROOT=/home/human/go
+  export GOROOT_BOOTSTRAP=/usr/local/go
+
+fetch source, run bootstrap::
+
+  cd /home/human
+  mkdir builds
+  cd builds
+  git clone https://go.googlesource.com/go
+  cd go
+  git checkout go1.5.3
+  cd src
+  bash bootstrap.bash
+
+Once the bootstrap phase is done then it should have created the
+bootstrap toolchain in ``/home/human/builds/go-openbsd-amd64-bootstrap``.
+We are now ready to build golang 1.5.x::
+
+  GOROOT_BOOTSTRAP=/home/human/builds/go-openbsd-amd64-bootstrap ./make.bash
+  cd /home/human/builds
+  mv go /home/human
+  export PATH=/home/human/go/bin:$PATH
+  export GOPATH=/home/human/gopath
+  mkdir /home/human/gopath
+
+I add the following to my .bashrc::
+
+  GOPATH=/home/human/gopath
+  GOROOT=/home/human/go
+  export PATH=/home/human/go/bin:/home/human/gopath/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
+You should now be able to use the golang you built::
+
+  go version
+  # which should output something like this:
+  go version go1.5.3 openbsd/amd64
+
+
+install and configure HoneyBadger
+`````````````````````````````````
+
+now use the normal method of ``go get`` to fetch and build honeybadger::
+
+  go get -v github.com/david415/HoneyBadger/cmd/honeyBadger
+
+as root you should prepare your BPF device permissions::
+
+  cd /dev/
+  chmod g+rw bpf*
+  ls -l bpf*
+
+  crw-rw----  1 root  wheel   23,   0 Feb 18 05:47 bpf0
+  crw-rw----  1 root  wheel   23,   1 Feb 18 05:45 bpf1
+  crw-rw----  1 root  wheel   23,   2 Feb 18 05:45 bpf2
+  crw-rw----  1 root  wheel   23,   3 Feb 18 05:45 bpf3
+  crw-rw----  1 root  wheel   23,   4 Feb 18 05:45 bpf4
+  crw-rw----  1 root  wheel   23,   5 Feb 18 05:45 bpf5
+  crw-rw----  1 root  wheel   23,   6 Feb 18 05:45 bpf6
+  crw-rw----  1 root  wheel   23,   7 Feb 18 05:45 bpf7
+  crw-rw----  1 root  wheel   23,   8 Feb 18 05:45 bpf8
+  crw-rw----  1 root  wheel   23,   9 Feb 18 05:45 bpf9
+
+After that as non-root you should create the incoming and archive logging directories
+for honeybadger::
+
+  mkdir archive incoming
+
+My network interface happens to be called ``vio0``, therefore I run honeyBadger like this::
+
+  honeyBadger -max_concurrent_connections=1000 -max_pcap_log_size=100 -max_pcap_rotations=10 \
+  -max_ring_packets=40 -metadata_attack_log=false -total_max_buffer=1000 -connection_max_buffer=100 \
+  -archive_dir=/home/human/archive -l=/home/human/incoming -log_packets=true -i=vio0 -daq=BSD_BPF
+
+
+
 honeyBadger commandline arguments and usage
 -------------------------------------------
 
