@@ -196,6 +196,43 @@ Here's an example run::
 
 
 
+deployment on HardenedBSD example
+---------------------------------
+
+As soon as I had HardenedBSD installed I tried installing go and was pleased to note the
+package install go-1.5.x. I also had to install git before fetching and building honeybadger::
+
+  pkg install go git
+
+And then you need to set your GOPATH before fetching with the ``go get`` command::
+
+  export GOPATH=/home/human/gopath
+  export PATH=/home/human/gopath/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/games:/usr/local/sbin:/usr/local/bin:/home/human/bin
+
+Then finally fetch and build honeybadger::
+
+  go get -v github.com/david415/HoneyBadger/cmd/honeyBadger
+
+Before running honeyBadger you must make sure your user is in the ``wheel`` group
+AND give group read-write permissions to /dev/bpf::
+
+  chmod g+rw /dev/bpf
+
+My network device on HardenedBSD happens to be called ``vtnet0`` because I'm running in a VM.
+Here's how to sniff vtnet0 on HardenedBSD as a non-root user::
+
+  honeyBadger -max_concurrent_connections=1000 -max_pcap_log_size=100 -max_pcap_rotations=10 \
+  -max_ring_packets=40 -metadata_attack_log=false -total_max_buffer=1000 -connection_max_buffer=100 \
+  -archive_dir=/home/human/archive -l=/home/human/incoming -log_packets=true -i=vtnet0 -daq=BSD_BPF
+
+  2016/02/18 19:11:19 HoneyBadger: comprehensive TCP injection attack detection.
+  2016/02/18 19:11:19 PageCache: created 1024 new pages
+  2016/02/18 19:11:19 Starting BSD_BPF packet capture on interface vtnet0
+
+
+**TODO**: i need to learn how to use the HardenedBSD jail security features!
+
+
 deployment on OpenBSD example
 -----------------------------
 
