@@ -233,6 +233,37 @@ Here's how to sniff vtnet0 on HardenedBSD as a non-root user::
 **TODO**: i need to learn how to use the HardenedBSD jail security features!
 
 
+
+deployment on SmartOS/IllumOS/OpenSolaris/Solaris
+-------------------------------------------------
+
+SmartOS, a modern ``OpenSolaris`` distribution uses ``pkgsrc`` source packages.
+
+install dependencies::
+
+  pkgin install gcc49-4.9.3
+  pkgin install git
+  pkgin libpcap
+
+get, build and install::
+
+    go get -v github.com/david415/HoneyBadger/cmd/honeyBadger
+
+setup an non-root user with privileges to capture packets::
+
+  useradd -d /home/human -m -c human human
+  usermod -K defaultpriv=basic,net_rawaccess human
+
+and then as the non-root user, run honeybadger::
+
+  mkdir archive
+  mkdir incoming
+
+  honeyBadger -max_concurrent_connections=1000 -max_pcap_log_size=100 -max_pcap_rotations=10 \
+  -max_ring_packets=40 -metadata_attack_log=false -total_max_buffer=1000 -connection_max_buffer=100 \
+  -archive_dir=/home/human/archive -l=/home/human/incoming -log_packets=true -daq=libpcap -i=net0
+
+
 deployment on OpenBSD example
 -----------------------------
 
