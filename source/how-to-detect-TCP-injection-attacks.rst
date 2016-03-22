@@ -126,8 +126,8 @@ write detection tools!
 ``````````````````````
   I hope that other software developers will continue to create additional tools to detect TCP injection attacks. If language security is a concern then you might prefer to use HoneyBadger which is pure Golang (except for the optional usage of the libpcap for sniffing). Rust is also an excellent choice however there does not yet exist a low level networking library for Rust with a TCP decoding layer; however libpnet shows lots of promise. [22]_
 
-build honey pots
-````````````````  
+deploy honey pots
+`````````````````
 In the context of TCP injection attacks, a honeypot might include two main sandboxed componenents; an application that will use a plaintext TCP protocol which may become compromised when it receives a TCP injection attack, and a TCP injection attack detection system with (optional) full-take logging (i.e. HoneyBadger).
 
 We further speculate that HoneyBadger (and other passive protocol analyzers that detect TCP injection attacks) could assist computer security researchers who use various tactics to "attract" injection attacks. In that case, HoneyBadger can be used to record the packet payloads and metadata about the attacks. These attack attraction tactics could range from custom automated web crawlers or programs to control tbb/firefox to manually utilizing a sandboxed browser to visit "high risk" web sites and use "high risk" search terms. In this case we mean high risk to indicate that these may be XKeyscore "Selectors" utilized by the "five-eyes" for automated computer network exploitation. However, any ISP or country with Internet access should be able to perform these types of attacks upon traffic traversing their networks.
