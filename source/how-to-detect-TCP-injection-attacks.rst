@@ -3,14 +3,13 @@
 how to detect TCP injection attacks
 ===================================
 
+
 abstract
 --------
 
-HoneyBadger is a passive TCP protocol analyzer that detects and optionally records TCP injection attacks. HoneyBadger has been called a "Quantum-Insert detector" because it can detect the NSA's "Quantum" attacks on TCP. These TCP injection attacks are clearly not just used by the NSA, but by various entities around the world. [16]_
+HoneyBadger is a passive TCP protocol analyzer that detects and optionally records TCP injection attacks. HoneyBadger has been called a "Quantum-Insert detector" because it can detect the NSA's "Quantum Insert" which is their code word for TCP injection attacks. These TCP injection attacks are clearly not just used by the NSA, but by various entities around the world. [16]_
 
-Many of these well-funded state/world-class adversaries are able to completely automate the compromising of computers using these TCP injection attacks against real people to violate their human rights. This could be especially dangerous when this auto-compromising happens based on key-word searches and participation in specific online forums.
-
-Deployments of HoneyBadger could provide enlightening attack statistics that may prove useful to security researchers, contributing to the responsible disclosure of stock-piled zero-days that currently threaten our intellectual freedoms.
+Many of these well-funded state/world-class adversaries are able to completely automate the compromising of computers using these TCP injection attacks against real people to violate their human rights. This could be especially dangerous for freedom of expression and human rights when this auto-compromising happens based on key-word searches and participation in specific online forums. Deployments of passive TCP protocol analyzers like HoneyBadger, could provide enlightening statistics that may prove useful to security researchers needing to inform the public that plaintext TCP protocols are not safe and can often lead to remote code execution vulnerabilities.
 
 
 honeybadger source code:
@@ -23,18 +22,18 @@ https://honeybadger.readthedocs.org/en/latest/
 introduction
 ------------
 
-Powerful entities world wide are stock piling zero-days. TCP injection attacks are used to deliver these attacks. The more sophisticated adversaries will use a security domain isolation policy to make sure their attack logic is located in a protected area of their network while they utilize multiple network taps and injection hosts in multiple locations. It is clear from the Snowden documents that at least in the past the NSA has utilized botnet (groups of compromised computers connected to the Internet) hosts as "Quantum Shooters", hosts that send the injection attack packets to the target upon receiving "injection tips" (recent TCP connection meta data including Sequence numbers read from a network tap).
+Powerful entities world wide are stock piling zero-days. TCP injection attacks are used to help mount these attacks by either delivering the exploit payload or more likely used to redirect the browser to retreive an attack payload from an ephemeral location which isn't attributable to the attacker. The more sophisticated adversaries will use a security domain isolation policy to keep their 0-day security exploits secret and make sure their attack logic is located in a protected area of their network while they utilize multiple network taps and injection hosts in multiple locations. It is clear from the Snowden documents that at least in the past the NSA has utilized compromised infrastructure and computers (aka a botnet) as "Quantum Shooters", hosts that send the injection attack packets to the target upon receiving "injection tips" (recent TCP connection meta data including Sequence numbers read from a network tap). Keeping their zero-day exploits must be a high priority, therefore we speculate that most attackers utilizing TCP injection attacks use the plaintext injection to redirect the browser to an ephemerally keyed HTTPS connection to retrieve the attack payload.
 
 
 
 TCP injection attacks
 ---------------------
 
-TCP injection attacks are man-on-the-side attacks (MOTS) [1]_ and are not the same thing as man-in-the-middle attacks (MITM). MOTS is defined by a situation when the attacker controls one or more communications channels in the route. This much is stated in Wikipedia: "Instead of completely controlling a network node as in a man-in-the-middle attack, the attacker only has regular access to the communication channel, which allows him to read the traffic and insert new messages, but not to modify or delete messages sent by other participants." [1]_ Much of the classic literature about TCP injection attacks considers TCP injection in the context of probabilistic TCP Sequence number prediction. [2]_ [3]_  These olde school attacks focused more on exploiting TCP Sequence number prediction and side channels, however TCP injection attacks are essentially a form of timing attack. Since the various improvements to the TCP's initial Initial Sequence Numbers (ISNs) [4]_ [5]_, TCP was widely believed to not be vulnerable to injection attacks, however TCP has always been vulnerable to injection attacks... and additionally has remained vulnerable to various Sequence prediction based injection attacks, including side channel inference attacks [6]_ [7]_ [8]_. Various so called classic and modern TCP injection attacks can involve an "off-path injection". These are remarkable deployment tactics where the attack packets originate from hosts that are not directly in either route between host Alice and host Bob. Ingress filtering may make this IP spoofing between networks less commonly available than before but perhaps still feasible today [6]_.
+TCP injection attacks are man-on-the-side attacks (MOTS) [1]_ and are not the same thing as man-in-the-middle attacks (MITM). MOTS is defined by a situation where the attacker controls one or more communications channels in the route. This much is stated in Wikipedia: "Instead of completely controlling a network node as in a man-in-the-middle attack, the attacker only has regular access to the communication channel, which allows him to read the traffic and insert new messages, but not to modify or delete messages sent by other participants." [1]_ Much of the classic literature about TCP injection attacks considers TCP injection in the context of probabilistic TCP Sequence number prediction. [2]_ [3]_  These olde school attacks focused more on exploiting TCP Sequence number prediction and side channels, however TCP injection attacks are essentially a form of timing attack. Since the various improvements to the TCP's initial Initial Sequence Numbers (ISNs) [4]_ [5]_, TCP was widely believed to not be vulnerable to injection attacks, however TCP has always been vulnerable to injection attacks... and additionally has remained vulnerable to various Sequence prediction based injection attacks, including side channel inference attacks [6]_ [7]_ [8]_. Various so called classic and modern TCP injection attacks can involve an "off-path injection". These are remarkable deployment tactics where the attack packets originate from hosts that are not directly in either route between host Alice and host Bob. Ingress filtering may make this IP spoofing between networks less commonly available than before but perhaps still feasible today [6]_.
 
-These injection hosts behave as "write-only network taps" in so far as they have the ability to inject packets but not read. It is my understanding that the leaked NSA documents refer to these injection hosts as "QUANTUM shooters" [9]_.  According to a Der Spiegal article about leaked NSA documents, these shooters create a layer of indirection that might be  used to make TCP injection attacks harder to track down: "And computers infected with Straitbizarre can be turned into disposable and non-attributable 'shooter' nodes." [10]_ We've also seen other code names for the shooters such as Straightbizarre and Daredevil. [11]_  According to a Guardian article the NSA may be using a topologically advantageous placement of servers in the network to win the packet race: "the NSA places secret servers, codenamed Quantum, at key places on the internet backbone. This  placement ensures that they can react faster than other websites can." [12]_ [13]_ One Wired article mentions that the NSA could be using MOTS attacks  rather than MITM attacks because it fit's their security domain isolation policy with regards to where attack logic is placed. [14]_ Any world class attacker such as the NSA would likely have measures to prevent leaking their 0-day to security researchers and adversaries. [15]_
+These injection hosts (the leaked NSA documents refer to these injection hosts as "QUANTUM shooters" [9]_) behave as "write-only network taps" in so far as they have the ability to inject packets but not read. According to a Der Spiegal article about leaked NSA documents, these shooters create a layer of indirection that might be  used to make TCP injection attacks harder to track down: "And computers infected with Straitbizarre can be turned into disposable and non-attributable 'shooter' nodes." [10]_ We've also seen other code names for the shooters such as Straightbizarre and Daredevil. [11]_  According to a Guardian article the NSA may be using a topologically advantageous placement of servers in the network to win the packet race: "the NSA places secret servers, codenamed Quantum, at key places on the internet backbone. This  placement ensures that they can react faster than other websites can." [12]_ [13]_ One Wired article mentions that the NSA could be using MOTS attacks  rather than MITM attacks because it fit's their security domain isolation policy with regards to where attack logic is placed. [14]_ Any world class attacker such as the NSA would likely have measures to prevent leaking their 0-day to security researchers and adversaries. [15]_
 
-According to various security researchers and leaked documents, there is the so called lawful intercept industry where governments and other organizations (perhaps with known track records of human right violations) can purchase "hacking appliances". [16]_ [17]_ [18]_ These MOTS appliances might offer an advantage over MITM attacks in that they may be very simple to deploy. Perhaps by plugging into a mirrored switch port. [20]_
+According to various security researchers and leaked documents, there is the so called lawful intercept industry where governments and other organizations (perhaps with known track records of human right violations) can purchase "hacking appliances". [16]_ [17]_ [18]_ These TCP MOTS appliances might offer an advantage over MITM attacks in that they may be very simple to deploy. Perhaps by plugging into a mirrored switch port. [20]_
 
 There exist multiple entities world wide that posses the capability to perform these TCP injection attacks with a very high probability of success, however they may not all have the same operational security policies. For instance perhaps the NSA has a policy of not deploying attack logic to insecure systems or physical facilities. I speculate that they have a security domain isolation policy that causes them to prefer an offsite MOTS approach over an onsite MOTS or MITM. The attacker might have an offsite command and control (C&C) center which passes instructions to these "shooters", who then perform the actual TCP injection attack on behalf of the C&C.
 
@@ -75,16 +74,26 @@ Segment veto and sloppy injection attacks are detected by means of a retrospecti
 In principal HoneyBadger of course cannot determine which packet was sent by an attacker and which was sent by the legit connection party. However we speculate that in the wild, injected packets will have interesting and varying TTLs. This and other header fields might make it possible to develop some heuristics for distinguishing injected packets. That speculation aside, HoneyBadger does detect and record TCP injection attack attempts with precision.
 
 
-other projects
---------------
+other projects and research
+---------------------------
 
-Recently it was brought to my attention that NetResec wrote another article
-about TCP injection attacks entitled "Covert Man on the Side Attacks" [23]_
-wherein they announce yet another tool written in golang called qisniff.
+An excellent paper describing some research and evidence of
+TCP injection attacks in the wild was recently published:
+**Website-Targeted False Content Injection by Network Operators**
+http://arxiv.org/abs/1602.07128
 
-I tested qisniff with my archive of pcap files ( https://github.com/david415/honeybadger-pcap-files )
-and it does detect segment veto and sloppy injection but not handshake hijack injection attacks.
+Recently it was brought to my attention that this guy TCP injected all his
+website visitors for a period of two months to see if anyone would notice!
+He entitled his TCP injection system "VAMPILE SQUID", excellent!
+http://www.tedunangst.com/flak/post/on-the-detection-of-quantum-insert
+
+NetResec wrote new article about TCP injection attacks entitled "Covert Man on the Side Attacks" [23]_
+wherein they announced another detection tool also written in golang called qisniff. Learning from
+their code I was able to fix several bugs in HoneyBadger. Although qisniff doesn't detect
+handshake hijack it has a very nice and simple design.
 https://github.com/zond/qisniff
+
+There are also a few other options for deteting TCP injection attacks:
 
 Bro:
 https://www.bro.org/index.html
@@ -98,18 +107,30 @@ https://github.com/inliniac/suricata
 
 
 
-future work and projects
+future work and research
 ------------------------
 
-I hope that other software developers will continue to create additional tools to detect TCP injection attacks. If language security is a concern then you might prefer to use HoneyBadger which is pure Golang (except for the optional usage of the libpcap for sniffing). Rust is also an excellent choice however there does not yet exist a low level networking library for Rust with a TCP decoding layer; however libpnet shows lots of promise. [22]_
-
-In the context of TCP injection attacks, a honeypot might include two main sandboxed componenents; an application that will use a plaintext TCP protocol which may become compromised when it receives a TCP injection attack, and a TCP injection attack detection system with (optional) full-take logging (i.e. HoneyBadger).
-
-We further speculate that HoneyBadger (and other passive protocol analyzers that detect TCP injection attacks) could assist computer security researchers who use various tactics to "attract" injection attacks. In that case, HoneyBadger can be used to record the packet payloads and metadata about the attacks. These attack attraction tactics could range from custom automated web crawlers or programs to control tbb/firefox to manually utilizing a sandboxed browser to visit "high risk" web sites and use "high risk" search terms. In this case we mean high risk to indicate that these may be XKeyscore "Selectors" utilized by the "five-eyes" for automated computer network exploitation. However, any ISP or country with Internet access should be able to perform these types of attacks upon traffic traversing their networks.
-
+detection on the Tor network
+````````````````````````````
 Tor exit relay operators may be interested in running HoneyBadger to collect statistics about attacks that are targetting users of the Tor network. Only the Tor exit relay operators will be able to detect if a Tor user's TCP traffic has been attacked by an injection... therefore it might make sense for there to be an "opt-in" mechanism for Tor users wishing to be alerted when their traffic has been attacked.
 
 It is also possible for Tor users to operate their own Tor exit relays AND run honeybadger on them all to record attacks upon their own traffic. In this case even if the Tor exit's country's telecommunications laws are very strict it should still be legal given that the operator consents to recording her own traffic.
+
+tor browser as a service
+````````````````````````
+
+It is possible for a Tor exit relay operator to provide a "tor browser service" wherein a zone/container is created on behalf of a client who connects to the browser running in the container via VNC or other protocol. The browsers traffic would exit immediately without a tor circuit so that the traffic could be monitored with HoneyBadger or other passive TCP analysis tools to detect TCP injection attacks.
+
+
+write detection tools!
+``````````````````````
+  I hope that other software developers will continue to create additional tools to detect TCP injection attacks. If language security is a concern then you might prefer to use HoneyBadger which is pure Golang (except for the optional usage of the libpcap for sniffing). Rust is also an excellent choice however there does not yet exist a low level networking library for Rust with a TCP decoding layer; however libpnet shows lots of promise. [22]_
+
+build honey pots
+````````````````  
+In the context of TCP injection attacks, a honeypot might include two main sandboxed componenents; an application that will use a plaintext TCP protocol which may become compromised when it receives a TCP injection attack, and a TCP injection attack detection system with (optional) full-take logging (i.e. HoneyBadger).
+
+We further speculate that HoneyBadger (and other passive protocol analyzers that detect TCP injection attacks) could assist computer security researchers who use various tactics to "attract" injection attacks. In that case, HoneyBadger can be used to record the packet payloads and metadata about the attacks. These attack attraction tactics could range from custom automated web crawlers or programs to control tbb/firefox to manually utilizing a sandboxed browser to visit "high risk" web sites and use "high risk" search terms. In this case we mean high risk to indicate that these may be XKeyscore "Selectors" utilized by the "five-eyes" for automated computer network exploitation. However, any ISP or country with Internet access should be able to perform these types of attacks upon traffic traversing their networks.
 
 
 
